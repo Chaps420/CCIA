@@ -17,18 +17,7 @@
       justify-content: center;
       align-items: center;
       box-sizing: border-box;
-      background: #0a0a0a; /* Fallback background color */
-    }
-    #backgroundImage {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      z-index: -1;
-      opacity: 0.3; /* Adjusted for visibility */
-      filter: grayscale(100%); /* Keep grayscale effect */
+      background: #0a0a0a; /* Solid black background */
     }
     .wrapper {
       width: 95%;
@@ -44,7 +33,7 @@
       box-sizing: border-box;
       border: 2px solid #ff0000;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-      background: rgba(0, 10, 0, 0.8); /* Restored semi-transparent */
+      background: rgba(0, 10, 0, 0.8);
       gap: 20px; /* Prevent overlap */
     }
     .main-console {
@@ -67,13 +56,16 @@
     }
     .media-panel {
       width: 100%;
-      margin-bottom: 10px;
+      margin-bottom: 15px; /* Consistent spacing */
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     .media-panel img, .media-panel video {
-      max-width: 100%;
-      max-height: 150px;
-      object-fit: contain;
+      width: 180px; /* Uniform size */
+      height: 100px; /* Uniform size */
+      object-fit: cover;
       border: 1px solid #ff0000;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
       cursor: pointer;
@@ -256,19 +248,22 @@
       }
       .sidebar {
         flex: none;
-        height: 200px; /* Adjusted for new video */
+        height: 200px; /* Adjusted for three items */
         flex-direction: row;
         overflow-x: auto;
         border-left: none;
         border-top: 1px solid #ff0000;
+        padding: 10px;
+        gap: 10px; /* Even spacing for mobile */
       }
       .media-panel {
         flex: 0 0 auto;
-        margin-right: 10px;
+        margin-right: 0;
+        margin-bottom: 0;
       }
       .media-panel img, .media-panel video {
-        max-width: 100px;
-        max-height: 100px;
+        width: 100px; /* Uniform size for mobile */
+        height: 60px; /* Uniform size for mobile */
       }
       .media-panel p {
         font-size: 0.8em;
@@ -302,10 +297,6 @@
   </style>
 </head>
 <body>
-  <!-- Background Image -->
-  <!-- For local testing, ensure 'AGENT1.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-  <!-- For GitHub Pages, ensure 'AGENT1.png' is in the repository root -->
-  <img id="backgroundImage" src="./AGENT1.png" alt="Background Image">
   <div class="wrapper">
     <div class="main-console">
       <div id="videoContainer"></div>
@@ -317,12 +308,12 @@
       </div>
     </div>
     <div class="sidebar">
-      <!-- Sidebar Image: Website Screenshot -->
-      <!-- For local testing, ensure 'ccia_website_screenshot.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-      <!-- For GitHub Pages, ensure 'ccia_website_screenshot.png' is in the repository root -->
+      <!-- Sidebar Image: CCIA Logo -->
+      <!-- For local testing, ensure 'ccia_logo.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
+      <!-- For GitHub Pages, ensure 'ccia_logo.png' is in the repository root -->
       <div class="media-panel">
         <a href="https://classified-cia-ugalabz.replit.app/" target="_blank">
-          <img src="./ccia_website_screenshot.png" alt="CCIA Website Screenshot">
+          <img src="./ccia_logo.png" alt="CCIA Logo">
         </a>
         <p>CCIA CLASSIFIED FILES CLICK HERE</p>
       </div>
@@ -352,16 +343,6 @@
   </div>
 
   <script>
-    // Debug background image
-    const backgroundImage = document.getElementById("backgroundImage");
-    backgroundImage.addEventListener('load', () => {
-      console.log('Background image loaded successfully');
-    });
-    backgroundImage.addEventListener('error', (e) => {
-      console.error('Background image failed to load:', e);
-      console.error('Ensure ./AGENT1.png is in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA or the GitHub repository root');
-    });
-
     const inputField = document.getElementById("userInput");
     const sendButton = document.getElementById("sendButton");
     const chatbox = document.getElementById("chatbox");
