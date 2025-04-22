@@ -295,7 +295,7 @@
 <body>
   <video id="backgroundVideo" playsinline autoplay loop muted>
     <source src="./background.mp4" type="video/mp4">
-    <p>Video failed to load. Ensure 'background.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA and try using a local web server.</p>
+    <p>Video failed to load. Ensure 'background.mp4' is in the correct directory and try using a local web server.</p>
   </video>
   <div class="wrapper">
     <div class="main-console">
@@ -308,11 +308,11 @@
       </div>
     </div>
     <div class="sidebar">
-      <div class="media-panel">
+      <div class="media-panel" style="max-height: 150px;">
         <a href="https://classified-cia-ugalabz.replit.app/" target="_blank">
-          <img src="./ccia_website_screenshot.png" alt="CCIA Website Screenshot">
+          <img src="./ccia_website_screenshot.png" alt="CCIA Website Screenshot" style="max-height: 150px;">
         </a>
-        <p>CCIA CLASSIFIED FILES - DO NOT CLICK!!</p>
+        <p>CCIA CLASSIFIED FILES <br> !! DO NOT CLICK !!</p>
       </div>
       <div class="media-panel">
         <a href="https://firstledger.net/token/rBFJGmWj6YaabVCxfsjiCM8pfYXs8xFdeC/UGA" target="_blank">
@@ -341,7 +341,7 @@
     const backgroundVideo = document.getElementById("backgroundVideo");
     backgroundVideo.addEventListener('error', (e) => {
       console.error('Background video error:', e);
-      console.error('Ensure ./background.mp4 is in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA and accessible');
+      console.error('Ensure ./background.mp4 is in the correct directory and accessible');
     });
     backgroundVideo.addEventListener('loadeddata', () => {
       console.log('Background video loaded successfully');
@@ -362,8 +362,9 @@
       ugaVideo.id = "ugaVideo";
       ugaVideo.loop = true;
       ugaVideo.muted = true;
-      ugaVideo.innerHTML = `<source src="./348910056580788233.mp4" type="video/mp4">`;
+      ugaVideo.innerHTML = `<source src="./UgaCCIAvideo.mp4" type="video/mp4">`;
       videoContainer.appendChild(ugaVideo);
+      ugaVideo.play().catch(error => console.error("Main video playback failed:", error));
     } else {
       const ugaImage = document.createElement("img");
       ugaImage.id = "ugaImage";
@@ -371,6 +372,16 @@
       ugaImage.alt = "Secure Console Still";
       videoContainer.appendChild(ugaImage);
     }
+
+    document.querySelectorAll('.media-panel video').forEach(video => {
+      video.addEventListener('error', (e) => {
+        console.error('Sidebar video error:', e);
+        console.error(`Failed to load video: ${video.querySelector('source').src}`);
+      });
+      video.addEventListener('loadeddata', () => {
+        console.log(`Sidebar video loaded: ${video.querySelector('source').src}`);
+      });
+    });
 
     function getElderVoice() {
       const voices = speechSynthesis.getVoices();
@@ -427,7 +438,7 @@
           if (!isMobile && ugaVideo) {
             ugaVideo.playbackRate = 1.5;
             ugaVideo.currentTime = 0;
-            ugaVideo.play().catch(error => console.error("Video playback failed:", error));
+            ugaVideo.play().catch(error => console.error("Main video playback failed during speech:", error));
             utterance.onend = () => {
               ugaVideo.pause();
               ugaVideo.currentTime = 0;
