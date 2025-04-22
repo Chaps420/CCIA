@@ -329,7 +329,7 @@
       </div>
       <div class="media-panel">
         <a href="https://x.com/UgAbugaXRP" target="_blank">
-          <video autoplay loop muted>
+          <video autoplay loop muted style="max-height: 150px;">
             <source src="./UgaCCIAvideo.mp4" type="video/mp4">
           </video>
         </a>
@@ -416,6 +416,16 @@
       img.addEventListener('load', () => {
         console.log(`Sidebar image loaded: ${img.src}`);
       });
+    });
+
+    // Check sidebar scroll state
+    const sidebar = document.querySelector('.sidebar');
+    window.addEventListener('load', () => {
+      if (sidebar.scrollHeight > sidebar.clientHeight) {
+        console.log('Sidebar scrollbar present: scrollHeight > clientHeight');
+      } else {
+        console.log('Sidebar scrollbar not present: content fits within height');
+      }
     });
 
     // Voice selection
