@@ -292,11 +292,10 @@
   </style>
 </head>
 <body>
-  <!-- Background Image (GIF) -->
-  <!-- Ensure 'background.gif' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-  <!-- If renamed, update src (e.g., './my_background.gif') -->
-  <!-- When hosting online, use a full URL (e.g., 'https://yourdomain.com/background.gif') -->
-  <img id="backgroundImage" src="./background.gif" alt="Background Animation" onerror="console.error('Failed to load background.gif. Ensure it is in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA');">
+  <!-- Background Image (WebP) -->
+  <!-- For local testing, ensure 'background.webp' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
+  <!-- For GitHub Pages, ensure 'background.webp' is in the repository root or adjust path (e.g., './assets/background.webp') -->
+  <img id="backgroundImage" src="./background.webp" alt="Background Image" onerror="console.error('Failed to load background.webp. Ensure it is in the repository root or C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA for local testing');">
   <div class="wrapper">
     <div class="main-console">
       <div id="videoContainer"></div>
@@ -309,8 +308,8 @@
     </div>
     <div class="sidebar">
       <!-- Sidebar Image: Website Screenshot -->
-      <!-- Ensure 'ccia_website_screenshot.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-      <!-- If renamed, update src (e.g., './website_preview.png') -->
+      <!-- For local testing, ensure 'ccia_website_screenshot.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
+      <!-- For GitHub Pages, ensure 'ccia_website_screenshot.png' is in the repository root or adjust path -->
       <div class="media-panel">
         <a href="https://classified-cia-ugalabz.replit.app/" target="_blank">
           <img src="./ccia_website_screenshot.png" alt="CCIA Website Screenshot">
@@ -318,9 +317,8 @@
         <p>CCIA CLASSIFIED FILES CLICK HERE</p>
       </div>
       <!-- Sidebar Video: Code Execution -->
-      <!-- Ensure 'code_execution.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-      <!-- If renamed, update src (e.g., './code_demo.mp4') -->
-      <!-- This video autoplays, loops, and is not clickable -->
+      <!-- For local testing, ensure 'code_execution.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
+      <!-- For GitHub Pages, ensure 'code_execution.mp4' is in the repository root or adjust path -->
       <div class="media-panel">
         <video autoplay loop muted>
           <source src="./code_execution.mp4" type="video/mp4">
@@ -338,10 +336,10 @@
     // Debug background image
     const backgroundImage = document.getElementById("backgroundImage");
     backgroundImage.addEventListener('load', () => {
-      console.log('Background GIF loaded successfully');
+      console.log('Background WebP loaded successfully');
     });
     backgroundImage.addEventListener('error', () => {
-      console.error('Failed to load background.gif. Ensure it is in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA');
+      console.error('Failed to load background.webp. Ensure it is in the repository root or C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA for local testing');
     });
 
     const inputField = document.getElementById("userInput");
@@ -358,7 +356,8 @@
     let ugaVideo = null;
     if (!isMobile) {
       // Video for non-mobile devices
-      // Ensure '348910056580788233.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
+      // For local testing, ensure '348910056580788233.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
+      // For GitHub Pages, ensure it is in the repository root or adjust path
       ugaVideo = document.createElement("video");
       ugaVideo.id = "ugaVideo";
       ugaVideo.loop = true;
@@ -367,7 +366,8 @@
       videoContainer.appendChild(ugaVideo);
     } else {
       // Image for mobile devices
-      // Ensure 'StillImage.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
+      // For local testing, ensure 'StillImage.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
+      // For GitHub Pages, ensure it is in the repository root or adjust path
       const ugaImage = document.createElement("img");
       ugaImage.id = "ugaImage";
       ugaImage.src = "./StillImage.png";
