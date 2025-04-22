@@ -17,6 +17,7 @@
       justify-content: center;
       align-items: center;
       box-sizing: border-box;
+      background: none; /* Remove background to avoid layering */
     }
     #backgroundVideo {
       position: fixed;
@@ -28,7 +29,6 @@
       z-index: -1;
       opacity: 0.1;
       filter: grayscale(100%);
-      background: #0a0a0a; /* Fallback color */
     }
     .wrapper {
       width: 95%;
@@ -40,10 +40,11 @@
       align-items: stretch;
       padding: 10px;
       position: relative;
-      z-index: 1; /* Ensure above video */
+      z-index: 1;
       box-sizing: border-box;
       border: 2px solid #ff0000;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+      background: transparent; /* Ensure no background interference */
     }
     .main-console {
       flex: 3;
@@ -53,7 +54,7 @@
     }
     .sidebar {
       flex: 1;
-      background: rgba(0, 10, 0, 0.8);
+      background: rgba(0, 10, 0, 0.7); /* Semi-transparent for visibility */
       padding: 10px;
       border-left: 1px solid #ff0000;
       display: flex;
@@ -103,8 +104,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #000;
-      z-index: 2; /* Ensure above video */
+      background: #000; /* Solid black for video/image */
+      z-index: 2;
     }
     #videoContainer video, #videoContainer img {
       width: 100%;
@@ -117,12 +118,12 @@
       flex: 1;
       width: 100%;
       padding: 10px;
-      background: rgba(0, 10, 0, 0.8);
+      background: rgba(0, 10, 0, 0.7); /* Semi-transparent */
       border: 1px solid #ff0000;
       margin-top: 10px;
       display: flex;
       flex-direction: column;
-      z-index: 2; /* Ensure above video */
+      z-index: 2;
     }
     #chatContainer h2 {
       margin: 0 0 10px;
@@ -139,7 +140,7 @@
       max-height: 200px;
       overflow-y: auto;
       margin-bottom: 10px;
-      background: #000;
+      background: #000; /* Solid black for chat */
       border: 1px solid #ff0000;
       padding: 8px;
       box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.1);
@@ -152,12 +153,12 @@
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
     }
     .user {
-      background: #330000;
+      background: rgba(51, 0, 0, 0.8);
       text-align: right;
       color: #ff0000;
     }
     .bot {
-      background: #110000;
+      background: rgba(17, 0, 0, 0.8);
       text-align: left;
       color: #ff0000;
     }
@@ -204,7 +205,7 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.9);
-      z-index: 1000; /* Ensure above video */
+      z-index: 1000;
       justify-content: center;
       align-items: center;
     }
@@ -364,8 +365,6 @@
     let ugaVideo = null;
     if (!isMobile) {
       // Video for non-mobile devices
-      // For local testing, ensure '348910056580788233.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
-      // For GitHub Pages, ensure it is in the repository root or adjust path
       ugaVideo = document.createElement("video");
       ugaVideo.id = "ugaVideo";
       ugaVideo.loop = true;
@@ -374,8 +373,6 @@
       videoContainer.appendChild(ugaVideo);
     } else {
       // Image for mobile devices
-      // For local testing, ensure 'StillImage.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
-      // For GitHub Pages, ensure it is in the repository root or adjust path
       const ugaImage = document.createElement("img");
       ugaImage.id = "ugaImage";
       ugaImage.src = "./StillImage.png";
