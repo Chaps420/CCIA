@@ -19,7 +19,7 @@
       align-items: center;
       box-sizing: border-box;
     }
-    #backgroundVideo {
+    #backgroundImage {
       position: fixed;
       top: 0;
       left: 0;
@@ -292,16 +292,11 @@
   </style>
 </head>
 <body>
-  <!-- Background Video -->
-  <!-- Ensure 'background.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-  <!-- If using a different name, update src (e.g., './my_background.mp4') -->
-  <!-- When hosting online, use a full URL (e.g., 'https://yourdomain.com/background.mp4') -->
-  <video id="backgroundVideo" playsinline autoplay loop muted>
-    <source src="./background.mp4" type="video/mp4">
-    <!-- Optional: Convert background.mp4 to WebM for broader compatibility and add here -->
-    <!-- <source src="./background.webm" type="video/webm"> -->
-    <p>Your browser does not support the video tag. Please check if 'background.mp4' exists in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA.</p>
-  </video>
+  <!-- Background Image (GIF) -->
+  <!-- Ensure 'background.gif' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
+  <!-- If renamed, update src (e.g., './my_background.gif') -->
+  <!-- When hosting online, use a full URL (e.g., 'https://yourdomain.com/background.gif') -->
+  <img id="backgroundImage" src="./background.gif" alt="Background Animation" onerror="console.error('Failed to load background.gif. Ensure it is in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA');">
   <div class="wrapper">
     <div class="main-console">
       <div id="videoContainer"></div>
@@ -315,7 +310,7 @@
     <div class="sidebar">
       <!-- Sidebar Image: Website Screenshot -->
       <!-- Ensure 'ccia_website_screenshot.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-      <!-- If using a different name, update src (e.g., './website_preview.png') -->
+      <!-- If renamed, update src (e.g., './website_preview.png') -->
       <div class="media-panel">
         <a href="https://classified-cia-ugalabz.replit.app/" target="_blank">
           <img src="./ccia_website_screenshot.png" alt="CCIA Website Screenshot">
@@ -324,7 +319,7 @@
       </div>
       <!-- Sidebar Video: Code Execution -->
       <!-- Ensure 'code_execution.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-      <!-- If using a different name, update src (e.g., './code_demo.mp4') -->
+      <!-- If renamed, update src (e.g., './code_demo.mp4') -->
       <!-- This video autoplays, loops, and is not clickable -->
       <div class="media-panel">
         <video autoplay loop muted>
@@ -340,6 +335,15 @@
   </div>
 
   <script>
+    // Debug background image
+    const backgroundImage = document.getElementById("backgroundImage");
+    backgroundImage.addEventListener('load', () => {
+      console.log('Background GIF loaded successfully');
+    });
+    backgroundImage.addEventListener('error', () => {
+      console.error('Failed to load background.gif. Ensure it is in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA');
+    });
+
     const inputField = document.getElementById("userInput");
     const sendButton = document.getElementById("sendButton");
     const chatbox = document.getElementById("chatbox");
@@ -347,25 +351,14 @@
     const modal = document.getElementById("modal");
     const modalContent = document.getElementById("modal-content");
 
-    // Debug background video loading
-    const backgroundVideo = document.getElementById("backgroundVideo");
-    backgroundVideo.addEventListener('error', (e) => {
-      console.error('Background video failed to load:', e);
-      console.error('Check if ./background.mp4 exists in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA');
-    });
-    backgroundVideo.addEventListener('loadeddata', () => {
-      console.log('Background video loaded successfully');
-    });
-
     // Detect mobile devices
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    // Set up video or image for #videoContainer based on device
+    // Set up video or image for #videoContainer
     let ugaVideo = null;
     if (!isMobile) {
       // Video for non-mobile devices
       // Ensure '348910056580788233.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
-      // If using a different name, update src (e.g., './response_animation.mp4')
       ugaVideo = document.createElement("video");
       ugaVideo.id = "ugaVideo";
       ugaVideo.loop = true;
@@ -375,7 +368,6 @@
     } else {
       // Image for mobile devices
       // Ensure 'StillImage.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
-      // If using a different name, update src (e.g., './static_image.jpg')
       const ugaImage = document.createElement("img");
       ugaImage.id = "ugaImage";
       ugaImage.src = "./StillImage.png";
@@ -383,7 +375,7 @@
       videoContainer.appendChild(ugaImage);
     }
 
-    // Function to get the best elderish voice
+    // Voice selection
     function getElderVoice() {
       const voices = speechSynthesis.getVoices();
       const preferredVoices = voices.filter(voice => 
@@ -396,13 +388,13 @@
       return preferredVoices[0] || voices.find(voice => voice.default) || voices[0] || null;
     }
 
-    // Ensure voices are loaded before using
     let voicesLoaded = false;
     speechSynthesis.onvoiceschanged = () => {
       voicesLoaded = true;
     };
     speechSynthesis.getVoices();
 
+    // Chat functionality
     sendButton.addEventListener("click", sendMessage);
     inputField.addEventListener("keydown", (e) => {
       if (e.key === "Enter") sendMessage();
@@ -429,18 +421,14 @@
         chatbox.innerHTML += `<div class="message bot">SYSTEM: ${data.reply}</div>`;
         chatbox.scrollTop = chatbox.scrollHeight;
 
-        // Play response with Web Speech API
         if ('speechSynthesis' in window) {
           const utterance = new SpeechSynthesisUtterance(data.reply);
           utterance.pitch = 0.8;
           utterance.rate = 0.7;
           utterance.volume = 1.0;
           const elderVoice = getElderVoice();
-          if (elderVoice) {
-            utterance.voice = elderVoice;
-          }
+          if (elderVoice) utterance.voice = elderVoice;
 
-          // Play video synced with voice on non-mobile devices
           if (!isMobile && ugaVideo) {
             ugaVideo.playbackRate = 1.5;
             ugaVideo.currentTime = 0;
@@ -453,7 +441,7 @@
 
           speechSynthesis.speak(utterance);
         } else {
-          console.warn("Web Speech API not supported in this browser.");
+          console.warn("Web Speech API not supported.");
         }
       } catch (error) {
         console.error('Console response error:', error);
@@ -461,7 +449,7 @@
       }
     }
 
-    // Modal functions for media (only used if additional clickable media is added)
+    // Modal functions (unused by current sidebar)
     function openModal(src) {
       modalContent.src = src;
       modal.style.display = "flex";
@@ -478,7 +466,6 @@
       if (video) video.pause();
     }
 
-    // Close modal on click outside
     modal.addEventListener('click', (e) => {
       if (e.target === modal) closeModal();
     });
