@@ -313,9 +313,11 @@
       </div>
     </div>
     <div class="sidebar">
-      <div class="media-panel" style="max-height: 150px;">
+      <div class="media-panel">
         <a href="https://classified-cia-ugalabz.replit.app/" target="_blank">
-          <img src="./ccia_website_screenshot.png" alt="CCIA Website Screenshot" style="max-height: 150px;">
+          <video autoplay loop muted>
+            <source src="./MrJ.mp4" type="video/mp4">
+          </video>
         </a>
         <p>CCIA CLASSIFIED FILES <br> !! DO NOT CLICK !!</p>
       </div>
@@ -439,7 +441,7 @@
       chatbox.innerHTML = "";
       chatbox.innerHTML += `<div class="message user">OPERATOR: ${userText}</div>`;
       inputField.value = "";
-      sendButton.disabled = true; // Disable button to prevent multiple submissions
+      sendButton.disabled = true;
 
       if (!isMobile && mainVideo) {
         console.log("Switching to response video: 348910056580788233.mp4");
@@ -481,7 +483,7 @@
                 mainVideo.currentTime = 0;
                 mainVideo.play().catch(error => console.error("Revert video playback failed:", error));
               }
-              sendButton.disabled = false; // Re-enable button
+              sendButton.disabled = false;
             };
 
             console.log("Starting speech synthesis");
@@ -497,7 +499,7 @@
                 mainVideo.currentTime = 0;
                 mainVideo.play().catch(error => console.error("Revert video playback failed:", error));
               }
-              sendButton.disabled = false; // Re-enable button
+              sendButton.disabled = false;
             }, 5000);
           }
         })
@@ -512,7 +514,7 @@
             mainVideo.currentTime = 0;
             mainVideo.play().catch(error => console.error("Revert video playback failed:", error));
           }
-          sendButton.disabled = false; // Re-enable button
+          sendButton.disabled = false;
         });
     }
 
