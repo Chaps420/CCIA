@@ -17,9 +17,9 @@
       justify-content: center;
       align-items: center;
       box-sizing: border-box;
-      background: none; /* Remove to avoid white layer */
+      background: #0a0a0a; /* Fallback background color */
     }
-    #backgroundVideo {
+    #backgroundImage {
       position: fixed;
       top: 0;
       left: 0;
@@ -27,9 +27,8 @@
       height: 100vh;
       object-fit: cover;
       z-index: -1;
-      opacity: 0.1;
-      filter: grayscale(100%);
-      background: #0a0a0a; /* Fallback */
+      opacity: 0.3; /* Adjusted for visibility */
+      filter: grayscale(100%); /* Keep grayscale effect */
     }
     .wrapper {
       width: 95%;
@@ -45,15 +44,15 @@
       box-sizing: border-box;
       border: 2px solid #ff0000;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-      background: transparent; /* Ensure background video shows through */
-      gap: 20px; /* Add spacing between main-console and sidebar */
+      background: rgba(0, 10, 0, 0.8); /* Restored semi-transparent */
+      gap: 20px; /* Prevent overlap */
     }
     .main-console {
       flex: 3;
       display: flex;
       flex-direction: column;
       padding: 10px;
-      max-width: 70%; /* Limit width to prevent overlap */
+      max-width: 70%; /* Prevent overlap */
     }
     .sidebar {
       flex: 1;
@@ -64,7 +63,7 @@
       flex-direction: column;
       align-items: center;
       overflow-y: auto;
-      min-width: 200px; /* Ensure sidebar doesn’t collapse */
+      min-width: 200px; /* Ensure sidebar width */
     }
     .media-panel {
       width: 100%;
@@ -129,7 +128,7 @@
       flex-direction: column;
       z-index: 2;
       box-sizing: border-box;
-      max-width: 100%; /* Ensure it fits within main-console */
+      max-width: 100%; /* Fit within main-console */
     }
     #chatContainer h2 {
       margin: 0 0 10px;
@@ -257,7 +256,7 @@
       }
       .sidebar {
         flex: none;
-        height: 200px; /* Increased for new video */
+        height: 200px; /* Adjusted for new video */
         flex-direction: row;
         overflow-x: auto;
         border-left: none;
@@ -303,13 +302,10 @@
   </style>
 </head>
 <body>
-  <!-- Background Video -->
-  <!-- For local testing, ensure 'background.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-  <!-- For GitHub Pages, ensure 'background.mp4' is in the repository root -->
-  <video id="backgroundVideo" playsinline autoplay loop muted>
-    <source src="./background.mp4" type="video/mp4">
-    <p>Video failed to load. Ensure 'background.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA or the GitHub repository root and try using a local web server.</p>
-  </video>
+  <!-- Background Image -->
+  <!-- For local testing, ensure 'AGENT1.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
+  <!-- For GitHub Pages, ensure 'AGENT1.png' is in the repository root -->
+  <img id="backgroundImage" src="./AGENT1.png" alt="Background Image">
   <div class="wrapper">
     <div class="main-console">
       <div id="videoContainer"></div>
@@ -356,14 +352,14 @@
   </div>
 
   <script>
-    // Debug background video
-    const backgroundVideo = document.getElementById("backgroundVideo");
-    backgroundVideo.addEventListener('loadeddata', () => {
-      console.log('Background video loaded successfully');
+    // Debug background image
+    const backgroundImage = document.getElementById("backgroundImage");
+    backgroundImage.addEventListener('load', () => {
+      console.log('Background image loaded successfully');
     });
-    backgroundVideo.addEventListener('error', (e) => {
-      console.error('Background video failed to load:', e);
-      console.error('Ensure ./background.mp4 is in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA or the GitHub repository root');
+    backgroundImage.addEventListener('error', (e) => {
+      console.error('Background image failed to load:', e);
+      console.error('Ensure ./AGENT1.png is in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA or the GitHub repository root');
     });
 
     const inputField = document.getElementById("userInput");
@@ -379,7 +375,6 @@
     // Set up video or image for #videoContainer
     let ugaVideo = null;
     if (!isMobile) {
-      // Video for non-mobile
       ugaVideo = document.createElement("video");
       ugaVideo.id = "ugaVideo";
       ugaVideo.loop = true;
@@ -387,7 +382,6 @@
       ugaVideo.innerHTML = `<source src="./348910056580788233.mp4" type="video/mp4">`;
       videoContainer.appendChild(ugaVideo);
     } else {
-      // Image for mobile
       const ugaImage = document.createElement("img");
       ugaImage.id = "ugaImage";
       ugaImage.src = "./StillImage.png";
