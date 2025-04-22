@@ -323,9 +323,7 @@
       </div>
       <div class="media-panel" style="margin-top: 20px;">
         <a href="https://firstledger.net/token/rBFJGmWj6YaabVCxfsjiCM8pfYXs8xFdeC/UGA" target="_blank">
-          <video autoplay loop muted>
-            <source src="./code_execution.mp4" type="video/mp4">
-          </video>
+          <img src="./UgaCIA.png" alt="Uga CIA Image">
         </a>
         <p>INTERCEPTED CODE</p>
       </div>
@@ -406,6 +404,17 @@
       });
       video.addEventListener('loadeddata', () => {
         console.log(`Sidebar video loaded: ${video.querySelector('source').src}`);
+      });
+    });
+
+    // Debug sidebar images
+    document.querySelectorAll('.media-panel img').forEach(img => {
+      img.addEventListener('error', (e) => {
+        console.error('Sidebar image error:', e);
+        console.error(`Failed to load image: ${img.src}`);
+      });
+      img.addEventListener('load', () => {
+        console.log(`Sidebar image loaded: ${img.src}`);
       });
     });
 
