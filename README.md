@@ -1,2 +1,2 @@
-# CCIA
-Cross Chain Intelligence Agency
+# Gnosis
+Gnosis
