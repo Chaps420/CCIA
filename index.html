@@ -12,12 +12,12 @@
       width: 100vw;
       overflow: hidden;
       font-family: 'Courier New', monospace;
+      background: #0a0a0a; /* Fallback background color */
       color: #ff0000;
       display: flex;
       justify-content: center;
       align-items: center;
       box-sizing: border-box;
-      background: none; /* Remove background to avoid layering */
     }
     #backgroundVideo {
       position: fixed;
@@ -44,7 +44,6 @@
       box-sizing: border-box;
       border: 2px solid #ff0000;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-      background: transparent; /* Ensure no background interference */
     }
     .main-console {
       flex: 3;
@@ -54,7 +53,7 @@
     }
     .sidebar {
       flex: 1;
-      background: rgba(0, 10, 0, 0.7); /* Semi-transparent for visibility */
+      background: rgba(0, 10, 0, 0.8);
       padding: 10px;
       border-left: 1px solid #ff0000;
       display: flex;
@@ -104,8 +103,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: #000; /* Solid black for video/image */
-      z-index: 2;
+      background: #000;
     }
     #videoContainer video, #videoContainer img {
       width: 100%;
@@ -118,12 +116,11 @@
       flex: 1;
       width: 100%;
       padding: 10px;
-      background: rgba(0, 10, 0, 0.7); /* Semi-transparent */
+      background: rgba(0, 10, 0, 0.8);
       border: 1px solid #ff0000;
       margin-top: 10px;
       display: flex;
       flex-direction: column;
-      z-index: 2;
     }
     #chatContainer h2 {
       margin: 0 0 10px;
@@ -140,7 +137,7 @@
       max-height: 200px;
       overflow-y: auto;
       margin-bottom: 10px;
-      background: #000; /* Solid black for chat */
+      background: #000;
       border: 1px solid #ff0000;
       padding: 8px;
       box-shadow: inset 0 0 10px rgba(255, 0, 0, 0.1);
@@ -153,12 +150,12 @@
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
     }
     .user {
-      background: rgba(51, 0, 0, 0.8);
+      background: #330000;
       text-align: right;
       color: #ff0000;
     }
     .bot {
-      background: rgba(17, 0, 0, 0.8);
+      background: #110000;
       text-align: left;
       color: #ff0000;
     }
@@ -296,13 +293,14 @@
 </head>
 <body>
   <!-- Background Video -->
-  <!-- For local testing, ensure 'background.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-  <!-- For GitHub Pages, ensure 'background.mp4' is in the repository root or adjust path (e.g., './assets/background.mp4') -->
+  <!-- Ensure 'background.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
+  <!-- If renamed, update src (e.g., './my_background.mp4') -->
+  <!-- When hosting online, use a full URL (e.g., 'https://yourdomain.com/background.mp4') -->
   <video id="backgroundVideo" playsinline autoplay loop muted>
     <source src="./background.mp4" type="video/mp4">
-    <!-- Optional WebM fallback for compatibility (convert background.mp4 to WebM if available) -->
+    <!-- Optional: Convert background.mp4 to WebM and uncomment for broader compatibility -->
     <!-- <source src="./background.webm" type="video/webm"> -->
-    <p>Video failed to load. Ensure 'background.mp4' is in the repository root or C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA for local testing.</p>
+    <p>Video failed to load. Ensure 'background.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA and try using a local web server.</p>
   </video>
   <div class="wrapper">
     <div class="main-console">
@@ -316,8 +314,8 @@
     </div>
     <div class="sidebar">
       <!-- Sidebar Image: Website Screenshot -->
-      <!-- For local testing, ensure 'ccia_website_screenshot.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-      <!-- For GitHub Pages, ensure 'ccia_website_screenshot.png' is in the repository root or adjust path -->
+      <!-- Ensure 'ccia_website_screenshot.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
+      <!-- If renamed, update src (e.g., './website_preview.png') -->
       <div class="media-panel">
         <a href="https://classified-cia-ugalabz.replit.app/" target="_blank">
           <img src="./ccia_website_screenshot.png" alt="CCIA Website Screenshot">
@@ -325,8 +323,9 @@
         <p>CCIA CLASSIFIED FILES CLICK HERE</p>
       </div>
       <!-- Sidebar Video: Code Execution -->
-      <!-- For local testing, ensure 'code_execution.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
-      <!-- For GitHub Pages, ensure 'code_execution.mp4' is in the repository root or adjust path -->
+      <!-- Ensure 'code_execution.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA -->
+      <!-- If renamed, update src (e.g., './code_demo.mp4') -->
+      <!-- This video autoplays, loops, and is not clickable -->
       <div class="media-panel">
         <video autoplay loop muted>
           <source src="./code_execution.mp4" type="video/mp4">
@@ -343,12 +342,12 @@
   <script>
     // Debug background video
     const backgroundVideo = document.getElementById("backgroundVideo");
+    backgroundVideo.addEventListener('error', (e) => {
+      console.error('Background video error:', e);
+      console.error('Ensure ./background.mp4 is in C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA and accessible');
+    });
     backgroundVideo.addEventListener('loadeddata', () => {
       console.log('Background video loaded successfully');
-    });
-    backgroundVideo.addEventListener('error', (e) => {
-      console.error('Background video failed to load:', e);
-      console.error('Ensure ./background.mp4 is in the repository root or C:\\Users\\cjdab\\Downloads\\ElderUgaChATBoT-CCIA');
     });
 
     const inputField = document.getElementById("userInput");
@@ -364,7 +363,8 @@
     // Set up video or image for #videoContainer
     let ugaVideo = null;
     if (!isMobile) {
-      // Video for non-mobile devices
+      // Video for non-mobile
+      // Ensure '348910056580788233.mp4' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
       ugaVideo = document.createElement("video");
       ugaVideo.id = "ugaVideo";
       ugaVideo.loop = true;
@@ -372,7 +372,8 @@
       ugaVideo.innerHTML = `<source src="./348910056580788233.mp4" type="video/mp4">`;
       videoContainer.appendChild(ugaVideo);
     } else {
-      // Image for mobile devices
+      // Image for mobile
+      // Ensure 'StillImage.png' is in C:\Users\cjdab\Downloads\ElderUgaChATBoT-CCIA
       const ugaImage = document.createElement("img");
       ugaImage.id = "ugaImage";
       ugaImage.src = "./StillImage.png";
