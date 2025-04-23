@@ -33,14 +33,14 @@
       box-sizing: border-box;
       border: 2px solid #ff0000;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
-      gap: 15px; /* Add gap between main-console and sidebar */
+      gap: 15px; /* Space between main-console and sidebar */
     }
     .main-console {
-      flex: 2.5; /* Reduced flex to give more space to sidebar */
+      flex: 2.5;
       display: flex;
       flex-direction: column;
       padding: 10px;
-      max-width: 65%; /* Limit width to prevent overlap */
+      max-width: 65%; /* Prevent overlap with sidebar */
     }
     .sidebar {
       flex: 1;
@@ -51,8 +51,8 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      overflow-y: hidden; /* Prevent scrollbar */
-      min-width: 200px; /* Ensure sidebar has enough space */
+      overflow-y: hidden;
+      min-width: 200px;
     }
     .media-panel {
       width: 100%;
@@ -66,7 +66,7 @@
     }
     .media-panel img, .media-panel video {
       max-width: 100%;
-      max-height: 120px; /* Shrunk for equal sizing */
+      max-height: 120px;
       object-fit: contain;
       border: 1px solid #ff0000;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
@@ -107,7 +107,7 @@
       z-index: 10;
       text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
       animation: flash 1s infinite;
-      pointer-events: none; /* Allow clicks to pass through */
+      pointer-events: none;
     }
     @keyframes flash {
       0%, 100% { opacity: 1; }
@@ -136,12 +136,12 @@
     #chatContainer {
       flex: 1;
       width: 100%;
-      max-width: 90%; /* Constrain width to prevent overflow */
+      max-width: 90%;
       padding: 10px;
       background: rgba(0, 10, 0, 0.8);
       border: 1px solid #ff0000;
       margin-top: 10px;
-      margin-right: 10px; /* Add right margin to avoid sidebar */
+      margin-right: 10px;
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
@@ -266,70 +266,105 @@
     @media (max-width: 768px) {
       .wrapper {
         flex-direction: column;
-        width: 98%;
-        height: 95vh;
+        width: 100%; /* Full width */
+        height: auto; /* Allow height to adjust */
+        padding: 5px;
         gap: 10px;
+        overflow-y: auto; /* Allow vertical scroll if needed */
       }
       .main-console {
         flex: none;
         width: 100%;
-        max-width: 100%; /* Full width on mobile */
+        max-width: 100%;
+        padding: 5px;
       }
       .sidebar {
         flex: none;
-        height: 150px;
-        flex-direction: row;
-        overflow-x: auto;
-        overflow-y: hidden;
+        width: 100%;
+        min-width: 100%;
+        height: auto; /* Adjust height dynamically */
+        flex-direction: column; /* Stack media panels vertically */
         border-left: none;
         border-top: 1px solid #ff0000;
-        min-width: 100%;
+        padding: 5px;
       }
       .media-panel {
-        flex: 0 0 auto;
-        margin-right: 10px;
+        margin: 5px 0;
+        max-width: 100%;
       }
       .media-panel img, .media-panel video {
         max-width: 80px;
         max-height: 80px;
       }
       .media-panel p {
-        font-size: 0.7em;
+        font-size: 0.6em; /* Smaller text */
       }
       .overlay {
-        font-size: 0.8em;
+        font-size: 0.7em; /* Smaller overlay text */
       }
       #videoContainer {
-        max-width: 400px;
+        max-width: 300px; /* Shrink video container */
+        margin: 0 auto 5px;
       }
       #chatContainer {
-        max-width: 100%; /* Full width on mobile */
-        margin-right: 0; /* No right margin on mobile */
+        max-width: 100%;
+        margin-right: 0;
+        padding: 5px;
       }
       #chatContainer h2 {
-        font-size: 1.5em;
+        font-size: 1.2em; /* Smaller title */
+        letter-spacing: 1px;
       }
       #chatbox {
         max-height: 150px;
-        font-size: 0.9em;
-      }
-    }
-    @media (max-width: 500px) {
-      #videoContainer {
-        max-width: 300px;
-      }
-      #chatContainer h2 {
-        font-size: 1.2em;
+        font-size: 0.8em; /* Smaller chat text */
+        padding: 5px;
       }
       input, button {
         padding: 8px;
-        font-size: 0.9em;
+        font-size: 0.8em; /* Smaller input/button text */
+      }
+      #error-screen {
+        font-size: 6vw; /* Smaller error text */
+        line-height: 1.3;
+      }
+    }
+    @media (max-width: 500px) {
+      .wrapper {
+        padding: 3px;
+      }
+      .main-console {
+        padding: 3px;
+      }
+      .sidebar {
+        padding: 3px;
+      }
+      #videoContainer {
+        max-width: 250px; /* Further shrink */
+      }
+      #chatContainer h2 {
+        font-size: 1em;
+      }
+      #chatbox {
+        max-height: 120px;
+        font-size: 0.7em;
+      }
+      input, button {
+        padding: 6px;
+        font-size: 0.7em;
+      }
+      .media-panel img, .media-panel video {
+        max-width: 60px;
+        max-height: 60px;
       }
       .media-panel p {
-        font-size: 0.6em;
+        font-size: 0.5em;
       }
       .overlay {
-        font-size: 0.7em;
+        font-size: 0.6em;
+      }
+      #error-screen {
+        font-size: 5vw;
       }
     }
     /* Styles for ERORR ERORR and JEET ALERT flashing effect */
@@ -341,15 +376,314 @@
       height: 100%;
       background: #000;
       color: #ff0000;
-      font-size: 8vw; /* Slightly smaller for two lines */
+      font-size: 8vw;
       font-family: 'Courier New', monospace;
       display: none;
       align-items: center;
       justify-content: center;
       text-align: center;
-      z-index: 1001; /* Above modal */
+      z-index: 1001;
       text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
-      line-height: 1.5; /* Space between ERORR ERORR and JEET ALERT */
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="main-console">
+      <div id="videoContainer"></div>
+      <div id="chatContainer">
+        <h2>CROSSCHAIN INTELLIGENCE AGENCY</h2>
+        <div id="chatbox"></div>
+        <input id="userInput" type="text" placeholder="ENTER AGENT ID">
+        <button id="sendButton">TRANSMIT</button>
+      </div>
+    </div>
+    <div class="sidebar">
+      <div class="media-panel">
+        <a href="https://classified-cia-ugalabz.replit.app/" target="_blank">
+          <video autoplay loop muted preload="auto" playsinline>
+            <source src="./UgaCCIAvideo.mp4" type="video/mp4">
+            <p>Video failed to load. Check file path or format.</p>
+          </video>
+          <div class="overlay">!! DO NOT CLICK !!</div>
+        </a>
+      </div>
+      <div class="media-panel">
+        <a href="https://firstledger.net/token/rBFJGmWj6YaabVCxfsjiCM8pfYXs8xFdeC/UGA" target="_blank">
+          <img src="./UgaCIA.png" alt="Uga CIA Image">
+          <div class="overlay">!! DO NOT CLICK !!</div>
+        </a>
+        <p>INTERCEPTED CODE</p>
+      </div>
+      <div class="media-panel">
+        <a href="https://x.com/UgAbugaXRP" target="_blank">
+          <img src="./ccia_logo.png" alt="CCIA Logo" style="max-height: 120px;">
+          <div class="overlay">!! DO NOT CLICK !!</div>
+        </a>
+        <p>!! DO NOT CLICK !!<br>AUTHORIZED ACCESS ONLY</p>
+      </div>
+    </div>
+  </div>
+  <div id="modal" class="modal">
+    <span class="modal-close" onclick="closeModal()">×</span>
+    <img id="modal-content" class="modal-content">
+  </div>
+  <!-- Error screen with ERORR ERORR and JEET ALERT -->
+  <div id="error-screen">ERORR ERORR<br>JEET ALERT</div>
+
+  <script>
+    // Clear sessionStorage on page load to force re-authentication
+    sessionStorage.removeItem('agentCleared');
+    console.log("Cleared sessionStorage on page load to require Agent ID re-entry");
+
+    // Configuration
+    const PAUSE_SIDEBAR_DURING_RESPONSE = false;
+
+    // Debounce function
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // Initialize main video container
+    const inputField = document.getElementById("userInput");
+    const sendButton = document.getElementById("sendButton");
+    const chatbox = document.getElementById("chatbox");
+    const videoContainer = document.getElementById("videoContainer");
+    const modal = document.getElementById("modal");
+    const modalContent = document.getElementById("modal-content");
+
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    let mainVideo = null;
+    let isSwitching = false;
+
+    // Check if user is already cleared in this session
+    const isAgentCleared = () => sessionStorage.getItem('agentCleared') === 'true';
+
+    if (!isMobile) {
+      mainVideo = document.createElement("video");
+      mainVideo.id = "mainVideo";
+      mainVideo.autoplay = true;
+      mainVideo.loop = true;
+      mainVideo.muted = true;
+      mainVideo.preload = "auto";
+      mainVideo.playsinline = true;
+      mainVideo.src = "./Animate-20250422.mp4";
+      videoContainer.appendChild(mainVideo);
+      console.log("Attempting to play initial video: Animate-20250422.mp4");
+      mainVideo.play().catch(error => {
+        console.error("Initial main video playback failed:", error);
+        retryVideoPlayback(mainVideo);
+      });
+
+      mainVideo.addEventListener('error', (e) => {
+        console.error('Main video error:', e);
+        console.error(`Failed to load video: ${mainVideo.src}`);
+      });
+      mainVideo.addEventListener('loadeddata', () => {
+        console.log(`Main video loaded: ${mainVideo.src}`);
+      });
+      mainVideo.addEventListener('pause', () => {
+        console.warn(`Main video paused: ${mainVideo.src}`);
+        retryVideoPlayback(mainVideo);
+      });
+      mainVideo.addEventListener('stalled', () => {
+        console.warn(`Main video stalled: ${mainVideo.src}`);
+        retryVideoPlayback(mainVideo);
+      });
+    } else {
+      const stillImage = document.createElement("img");
+      stillImage.id = "stillImage";
+      stillImage.src = "./StillImage.png";
+      stillImage.alt = "Secure Console Still";
+      videoContainer.appendChild(stillImage);
+      console.log("Mobile device detected, using StillImage.png");
+    }
+
+    // Video playback retry function
+    function retryVideoPlayback(video) {
+      if (video.paused && !isSwitching) {
+        console.log(`Retrying playback for video: ${video.src}`);
+        video.load();
+        video.play().catch(error => {
+          console.error(`Retry playback failed for ${video.src}:`, error);
+        });
+      }
+    }
+
+    // Monitor sidebar video (top pane only)
+    const sidebarVideos = document.querySelectorAll('.media-panel video');
+    sidebarVideos.forEach(video => {
+      video.addEventListener('error', (e) => {
+        console.error('Sidebar video error:', e);
+        console.error(`Failed to load video: ${video.querySelector('source').src}`);
+      });
+      video.addEventListener('loadeddata', () => {
+        console.log(`Sidebar video loaded: ${video.querySelector('source').src}`);
+      });
+      video.addEventListener('pause', () => {
+        console.warn(`Sidebar video paused: ${video.querySelector('source').src}`);
+        retryVideoPlayback(video);
+      });
+      video.addEventListener('stalled', () => {
+        console.warn(`Sidebar video stalled: ${video.querySelector('source').src}`);
+        retryVideoPlayback(video);
+      });
+      video.play().catch(error => {
+        console.error(`Initial playback failed for ${video.querySelector('source').src}:`, error);
+        retryVideoPlayback(video);
+      });
+    });
+
+    // Periodic check for paused sidebar video
+    setInterval(() => {
+      sidebarVideos.forEach(video => {
+        if (video.paused && !isSwitching) {
+          console.warn(`Periodic check: Sidebar video paused: ${video.querySelector('source').src}`);
+          retryVideoPlayback(video);
+        }
+      });
+    }, 2000);
+
+    // Debug sidebar images
+    document.querySelectorAll('.media-panel img').forEach(img => {
+      img.addEventListener('error', (e) => {
+        console.error('Sidebar image error:', e);
+        console.error(`Failed to load image: ${img.src}`);
+      });
+      img.addEventListener('load', () => {
+        console.log(`Sidebar image loaded: ${img.src}`);
+      });
+ tandard mobile breakpoint */
+      .wrapper {
+        flex-direction: column;
+        width: 100%;
+        height: auto;
+        padding: 5px;
+        gap: 10px;
+        overflow-y: auto;
+      }
+      .main-console {
+        flex: none;
+        width: 100%;
+        max-width: 100%;
+        padding: 5px;
+      }
+      .sidebar {
+        flex: none;
+        width: 100%;
+        min-width: 100%;
+        height: auto;
+        flex-direction: column;
+        border-left: none;
+        border-top: 1px solid #ff0000;
+        padding: 5px;
+      }
+      .media-panel {
+        margin: 5px 0;
+        max-width: 100%;
+      }
+      .media-panel img, .media-panel video {
+        max-width: 80px;
+        max-height: 80px;
+      }
+      .media-panel p {
+        font-size: 0.6em;
+      }
+      .overlay {
+        font-size: 0.7em;
+      }
+      #videoContainer {
+        max-width: 300px;
+        margin: 0 auto 5px;
+      }
+      #chatContainer {
+        max-width: 100%;
+        margin-right: 0;
+        padding: 5px;
+      }
+      #chatContainer h2 {
+        font-size: 1.2em;
+        letter-spacing: 1px;
+      }
+      #chatbox {
+        max-height: 150px;
+        font-size: 0.8em;
+        padding: 5px;
+      }
+      input, button {
+        padding: 8px;
+        font-size: 0.8em;
+      }
+      #error-screen {
+        font-size: 6vw;
+        line-height: 1.3;
+      }
+    }
+    @media (max-width: 500px) {
+      .wrapper {
+        padding: 3px;
+      }
+      .main-console {
+        padding: 3px;
+      }
+      .sidebar {
+        padding: 3px;
+      }
+      #videoContainer {
+        max-width: 250px;
+      }
+      #chatContainer h2 {
+        font-size: 1em;
+      }
+      #chatbox {
+        max-height: 120px;
+        font-size: 0.7em;
+      }
+      input, button {
+        padding: 6px;
+        font-size: 0.7em;
+      }
+      .media-panel img, .media-panel video {
+        max-width: 60px;
+        max-height: 60px;
+      }
+      .media-panel p {
+        font-size: 0.5em;
+      }
+      .overlay {
+        font-size: 0.6em;
+      }
+      #error-screen {
+        font-size: 5vw;
+      }
+    }
+    /* Styles for ERORR ERORR and JEET ALERT flashing effect */
+    #error-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #ff0000;
+      font-size: 8vw;
+      font-family: 'Courier New', monospace;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 1001;
+      text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+      line-height: 1.5;
     }
   </style>
 </head>
