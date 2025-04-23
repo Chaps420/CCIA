@@ -55,6 +55,7 @@
       width: 100%;
       margin-bottom: 10px;
       text-align: center;
+      position: relative; /* For overlay positioning */
     }
     .media-panel img, .media-panel video {
       max-width: 100%;
@@ -81,6 +82,24 @@
       color: #ff0000;
       text-transform: uppercase;
       text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    }
+    .video-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: #ff0000;
+      font-size: 1.2em;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      cursor: pointer;
+      z-index: 10;
+      text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
     }
     #videoContainer {
       width: 100%;
@@ -255,6 +274,9 @@
         max-width: 100px;
         max-height: 100px;
       }
+      .video-overlay {
+        font-size: 0.8em;
+      }
       .media-panel p {
         font-size: 0.8em;
       }
@@ -301,7 +323,7 @@
       <div class="media-panel">
         <a href="https://classified-cia-ugalabz.replit.app/" target="_blank">
           <video autoplay loop muted preload="auto" playsinline>
-            <source src="./MrJ.mp4" type="video/mp4">
+            <source src="./UgaCCIAvideo.mp4" type="video/mp4">
             <p>Video failed to load. Check file path or format.</p>
           </video>
         </a>
@@ -315,12 +337,12 @@
       </div>
       <div class="media-panel">
         <a href="https://x.com/UgAbugaXRP" target="_blank">
-          <video autoplay loop muted preload="auto" playsinline style="max-height: 150px;">
-            <source src="./UgaCCIAvideo.mp4" type="video/mp4">
+          <video loop muted preload="auto" playsinline style="max-height: 150px;" class="bottom-video">
+            <source src="./MrJ.mp4" type="video/mp4">
             <p>Video failed to load. Check file path or format.</p>
           </video>
+          <div class="video-overlay" onclick="playBottomVideo(this)">!! DO NOT CLICK !!</div>
         </a>
-        <p>DECLASSIFIED VIDEO</p>
       </div>
     </div>
   </div>
@@ -390,7 +412,7 @@
 
     // Video playback retry function
     function retryVideoPlayback(video) {
-      if (video.paused && !isSwitching) {
+      if (video.paused && !isSwitching && !video.classList.contains('bottom-video')) {
         console.log(`Retrying playback for video: ${video.src}`);
         video.load();
         video.play().catch(error => {
@@ -399,8 +421,21 @@
       }
     }
 
-    // Monitor sidebar videos for pausing
-    const sidebarVideos = document.querySelectorAll('.media-panel video');
+    // Play bottom video on overlay click
+    function playBottomVideo(overlay) {
+      const video = overlay.previousElementSibling;
+      if (video && video.tagName === 'VIDEO') {
+        video.play().catch(error => {
+          console.error(`Bottom video playback failed: ${video.src}`, error);
+          retryVideoPlayback(video);
+        });
+        overlay.style.display = 'none'; // Hide overlay after click
+        console.log("Bottom video playback triggered");
+      }
+    }
+
+    // Monitor sidebar videos for pausing (exclude bottom video unless played)
+    const sidebarVideos = document.querySelectorAll('.media-panel video:not(.bottom-video)');
     sidebarVideos.forEach(video => {
       video.addEventListener('error', (e) => {
         console.error('Sidebar video error:', e);
@@ -424,7 +459,7 @@
       });
     });
 
-    // Periodic check for paused sidebar videos
+    // Periodic check for paused sidebar videos (exclude bottom video)
     setInterval(() => {
       sidebarVideos.forEach(video => {
         if (video.paused && !isSwitching) {
@@ -520,7 +555,7 @@
           if ('speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance(data.reply);
             utterance.pitch = 0.8;
-            utterance.rate = 0.6; // Reduced for smoother performance
+            utterance.rate = 0.6;
             utterance.volume = 1.0;
             const maleVoice = getDefaultMaleVoice();
             if (maleVoice) utterance.voice = maleVoice;
@@ -592,7 +627,6 @@
           console.error('Console response error:', error);
           chatbox.innerHTML += `<div class="message bot">SYSTEM ERROR: ${error.message}</div>`;
           if (!isMobile && mainVideo && !isSwitching) {
-            console.log("Error occurred, reverting to initial video");
             mainVideo.src = "./Animate-20250422.mp4";
             mainVideo.playbackRate = 1.0;
             mainVideo.currentTime = 0;
