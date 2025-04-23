@@ -33,12 +33,14 @@
       box-sizing: border-box;
       border: 2px solid #ff0000;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+      gap: 15px; /* Add gap between main-console and sidebar */
     }
     .main-console {
-      flex: 3;
+      flex: 2.5; /* Reduced flex to give more space to sidebar */
       display: flex;
       flex-direction: column;
       padding: 10px;
+      max-width: 65%; /* Limit width to prevent overlap */
     }
     .sidebar {
       flex: 1;
@@ -50,6 +52,7 @@
       justify-content: space-between;
       align-items: center;
       overflow-y: hidden; /* Prevent scrollbar */
+      min-width: 200px; /* Ensure sidebar has enough space */
     }
     .media-panel {
       width: 100%;
@@ -133,12 +136,15 @@
     #chatContainer {
       flex: 1;
       width: 100%;
+      max-width: 90%; /* Constrain width to prevent overflow */
       padding: 10px;
       background: rgba(0, 10, 0, 0.8);
       border: 1px solid #ff0000;
       margin-top: 10px;
+      margin-right: 10px; /* Add right margin to avoid sidebar */
       display: flex;
       flex-direction: column;
+      box-sizing: border-box;
     }
     #chatContainer h2 {
       margin: 0 0 10px;
@@ -262,10 +268,12 @@
         flex-direction: column;
         width: 98%;
         height: 95vh;
+        gap: 10px;
       }
       .main-console {
         flex: none;
         width: 100%;
+        max-width: 100%; /* Full width on mobile */
       }
       .sidebar {
         flex: none;
@@ -275,6 +283,7 @@
         overflow-y: hidden;
         border-left: none;
         border-top: 1px solid #ff0000;
+        min-width: 100%;
       }
       .media-panel {
         flex: 0 0 auto;
@@ -292,6 +301,10 @@
       }
       #videoContainer {
         max-width: 400px;
+      }
+      #chatContainer {
+        max-width: 100%; /* Full width on mobile */
+        margin-right: 0; /* No right margin on mobile */
       }
       #chatContainer h2 {
         font-size: 1.5em;
@@ -345,7 +358,7 @@
     <div class="main-console">
       <div id="videoContainer"></div>
       <div id="chatContainer">
-        <h2>Cross Chain Intelligence Agency</h2>
+        <h2>CROSSCHAIN INTELLIGENCE AGENCY</h2>
         <div id="chatbox"></div>
         <input id="userInput" type="text" placeholder="ENTER AGENT ID">
         <button id="sendButton">TRANSMIT</button>
@@ -385,6 +398,10 @@
   <div id="error-screen">ERORR ERORR<br>JEET ALERT</div>
 
   <script>
+    // Clear sessionStorage on page load to force re-authentication
+    sessionStorage.removeItem('agentCleared');
+    console.log("Cleared sessionStorage on page load to require Agent ID re-entry");
+
     // Configuration
     const PAUSE_SIDEBAR_DURING_RESPONSE = false;
 
@@ -413,8 +430,8 @@
     let mainVideo = null;
     let isSwitching = false;
 
-    // Check if user is already cleared
-    const isAgentCleared = () => localStorage.getItem('agentCleared') === 'true';
+    // Check if user is already cleared in this session
+    const isAgentCleared = () => sessionStorage.getItem('agentCleared') === 'true';
 
     if (!isMobile) {
       mainVideo = document.createElement("video");
@@ -589,7 +606,7 @@
 
           // If not already cleared, check if this transmission grants clearance
           if (!cleared && userText.toLowerCase().includes('agent')) {
-            localStorage.setItem('agentCleared', 'true');
+            sessionStorage.setItem('agentCleared', 'true');
             console.log(`Agent clearance granted: ${requestId}`);
           }
 
