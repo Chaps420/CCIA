@@ -55,7 +55,6 @@
       width: 100%;
       margin-bottom: 10px;
       text-align: center;
-      position: relative;
     }
     .media-panel img, .media-panel video {
       max-width: 100%;
@@ -82,24 +81,6 @@
       color: #ff0000;
       text-transform: uppercase;
       text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
-    }
-    .video-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      color: #ff0000;
-      font-size: 1.2em;
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      cursor: pointer;
-      z-index: 10;
-      text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
     }
     #videoContainer {
       width: 100%;
@@ -274,9 +255,6 @@
         max-width: 100px;
         max-height: 100px;
       }
-      .video-overlay {
-        font-size: 0.8em;
-      }
       .media-panel p {
         font-size: 0.8em;
       }
@@ -337,12 +315,9 @@
       </div>
       <div class="media-panel">
         <a href="https://x.com/UgAbugaXRP" target="_blank">
-          <video loop muted preload="auto" playsinline style="max-height: 150px;" class="bottom-video">
-            <source src="./MrJ.mp4" type="video/mp4">
-            <p>Video failed to load. Check file path or format.</p>
-          </video>
-          <div class="video-overlay" onclick="playBottomVideo(this)">!! DO NOT CLICK !!</div>
+          <img src="./ccia_logo.png" alt="CCIA Logo" style="max-height: 150px;">
         </a>
+        <p>!! DO NOT CLICK !!</p>
       </div>
     </div>
   </div>
@@ -355,7 +330,7 @@
     // Configuration
     const PAUSE_SIDEBAR_DURING_RESPONSE = false;
 
-    // Debounce function to prevent rapid submissions
+    // Debounce function
     function debounce(func, wait) {
       let timeout;
       return function executedFunction(...args) {
@@ -422,7 +397,7 @@
 
     // Video playback retry function
     function retryVideoPlayback(video) {
-      if (video.paused && !isSwitching && !video.classList.contains('bottom-video')) {
+      if (video.paused && !isSwitching) {
         console.log(`Retrying playback for video: ${video.src}`);
         video.load();
         video.play().catch(error => {
@@ -431,21 +406,8 @@
       }
     }
 
-    // Play bottom video on overlay click
-    function playBottomVideo(overlay) {
-      const video = overlay.previousElementSibling;
-      if (video && video.tagName === 'VIDEO') {
-        video.play().catch(error => {
-          console.error(`Bottom video playback failed: ${video.src}`, error);
-          retryVideoPlayback(video);
-        });
-        overlay.style.display = 'none';
-        console.log("Bottom video playback triggered");
-      }
-    }
-
-    // Monitor sidebar videos for pausing (exclude bottom video)
-    const sidebarVideos = document.querySelectorAll('.media-panel video:not(.bottom-video)');
+    // Monitor sidebar video (top pane only)
+    const sidebarVideos = document.querySelectorAll('.media-panel video');
     sidebarVideos.forEach(video => {
       video.addEventListener('error', (e) => {
         console.error('Sidebar video error:', e);
@@ -468,7 +430,7 @@
       });
     });
 
-    // Periodic check for paused sidebar videos
+    // Periodic check for paused sidebar video
     setInterval(() => {
       sidebarVideos.forEach(video => {
         if (video.paused && !isSwitching) {
@@ -533,21 +495,6 @@
       inputField.value = "";
       sendButton.disabled = true;
 
-      if (!isMobile && mainVideo && !isSwitching) {
-        isSwitching = true;
-        console.log(`Switching to response video: 348910056580788233.mp4, requestId: ${requestId}`);
-        if (PAUSE_SIDEBAR_DURING_RESPONSE) {
-          sidebarVideos.forEach(video => video.pause());
-        }
-        mainVideo.src = "./348910056580788233.mp4";
-        mainVideo.playbackRate = 1.2;
-        mainVideo.currentTime = 0;
-        mainVideo.play().catch(error => {
-          console.error(`Response video playback failed: ${requestId}`, error);
-          retryVideoPlayback(mainVideo);
-        });
-      }
-
       fetch("https://ccia.onrender.com/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -576,12 +523,18 @@
 
             utterance.onstart = () => {
               console.log(`Speech synthesis started: ${requestId}`);
-              if (!isMobile && mainVideo && mainVideo.src.includes("348910056580788233.mp4")) {
-                requestAnimationFrame(() => {
-                  mainVideo.play().catch(error => {
-                    console.error(`Speech-sync video playback failed: ${requestId}`, error);
-                    retryVideoPlayback(mainVideo);
-                  });
+              if (!isMobile && mainVideo && !isSwitching) {
+                isSwitching = true;
+                console.log(`Switching to response video: 348910056580788233.mp4, requestId: ${requestId}`);
+                if (PAUSE_SIDEBAR_DURING_RESPONSE) {
+                  sidebarVideos.forEach(video => video.pause());
+                }
+                mainVideo.src = "./348910056580788233.mp4";
+                mainVideo.playbackRate = 1.2;
+                mainVideo.currentTime = 0;
+                mainVideo.play().catch(error => {
+                  console.error(`Speech-sync video playback failed: ${requestId}`, error);
+                  retryVideoPlayback(mainVideo);
                 });
               }
             };
@@ -616,25 +569,35 @@
             setTimeout(() => {
               console.log(`Fallback delay completed: ${requestId}`);
               if (!isMobile && mainVideo && !isSwitching) {
-                mainVideo.src = "./Animate-20250422.mp4";
-                mainVideo.playbackRate = 1.0;
+                isSwitching = true;
+                mainVideo.src = "./348910056580788233.mp4";
+                mainVideo.playbackRate = 1.2;
                 mainVideo.currentTime = 0;
                 mainVideo.play().catch(error => {
-                  console.error(`Revert video playback failed: ${requestId}`, error);
+                  console.error(`Response video playback failed: ${requestId}`, error);
                   retryVideoPlayback(mainVideo);
                 });
-                if (PAUSE_SIDEBAR_DURING_RESPONSE) {
-                  sidebarVideos.forEach(video => {
-                    video.play().catch(error => {
-                      console.error(`Sidebar video resume failed: ${video.src}, ${requestId}`, error);
-                      retryVideoPlayback(video);
-                    });
+                setTimeout(() => {
+                  mainVideo.src = "./Animate-20250422.mp4";
+                  mainVideo.playbackRate = 1.0;
+                  mainVideo.currentTime = 0;
+                  mainVideo.play().catch(error => {
+                    console.error(`Revert video playback failed: ${requestId}`, error);
+                    retryVideoPlayback(mainVideo);
                   });
-                }
+                  if (PAUSE_SIDEBAR_DURING_RESPONSE) {
+                    sidebarVideos.forEach(video => {
+                      video.play().catch(error => {
+                        console.error(`Sidebar video resume failed: ${video.src}, ${requestId}`, error);
+                        retryVideoPlayback(video);
+                      });
+                    });
+                  }
+                  isSwitching = false;
+                }, 5000);
               }
               sendButton.disabled = false;
-              isSwitching = false;
-            }, 5000);
+            }, 1000);
           }
         })
         .catch(error => {
