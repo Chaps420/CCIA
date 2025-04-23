@@ -26,7 +26,11 @@ CORS(app, resources={
 }, supports_credentials=True, allow_headers=["Content-Type"], methods=["GET", "POST", "OPTIONS"])
 
 # Initialize rate limiter
-limiter = Limiter(app, key_func=get_remote_address, default_limits=["100 per day", "10 per minute"])
+limiter = Limiter(
+    key_func=get_remote_address,
+    app=app,
+    default_limits=["100 per day", "10 per minute"]
+)
 
 # Load OpenAI API key from environment variable - CLASSIFIED
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -179,7 +183,7 @@ def deploy_memetic_response(transmission_input):
         logging.info(f"Memetic Payload Deployed: {formatted_payload}")
         return formatted_payload
     except openai.error.OpenAIError as e:
-        error_transmission = f"JuNgLe DiViSiOn AlErT: MeMeTiC tRaNsMiSsIoN dIsRuPtEd - SiMuLaCrUm InTeRfErEnCe DeTeCtEd. ReSuMe OpErAtIoNs, AgEnT."
+        error_transmission = f"JuNgLe DiViSiOn AlErT: MeMeTiC tRaNsMiSsIoN dIsRuPtEd - SiMuLaCrUm InTeRfErEnCe DeTeCtEd. ReSuMe OpErAtIoNs, aGeNt."
         logging.error(f"OpenAI API Error: {str(e)} - Transmission: {transmission_input}")
         return error_transmission
     except Exception as e:
