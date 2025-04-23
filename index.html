@@ -39,7 +39,7 @@
       flex: 2.5;
       display: flex;
       flex-direction: column;
-      align-items: center; /* Center children horizontally */
+      align-items: center;
       padding: 10px;
       max-width: 65%;
     }
@@ -141,7 +141,7 @@
       padding: 10px;
       background: rgba(0, 10, 0, 0.8);
       border: 1px solid #ff0000;
-      margin: 0 auto; /* Center horizontally */
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
@@ -194,7 +194,7 @@
       transition: all 0.3s ease;
       box-sizing: border-box;
       font-family: 'Courier New', monospace;
-      z-index: 5; /* Ensure input/button are interactive */
+      z-index: 5;
     }
     input {
       background: #000;
@@ -202,7 +202,7 @@
       border: 1px solid #ff0000;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.2);
       text-align: left;
-      pointer-events: auto; /* Ensure input is clickable */
+      pointer-events: auto;
     }
     input::placeholder {
       color: #cc0000;
@@ -279,7 +279,7 @@
         width: 100%;
         max-width: 100%;
         padding: 5px;
-        align-items: center; /* Center children on mobile */
+        align-items: center;
       }
       .sidebar {
         flex: none;
@@ -471,9 +471,14 @@
     // Check if user is already cleared in this session
     const isAgentCleared = () => sessionStorage.getItem('agentCleared') === 'true';
 
+    // Set initial placeholder based on clearance
+    if (isAgentCleared()) {
+      inputField.placeholder = "AGENT AUTHORIZED: Ask The Questions You Seek Answers To";
+    }
+
     // Initialize video or image
     function initializeMedia() {
-      videoContainer.innerHTML = ''; // Clear container
+      videoContainer.innerHTML = '';
       if (!isMobile) {
         mainVideo = document.createElement("video");
         mainVideo.id = "mainVideo";
@@ -628,7 +633,7 @@
       }
 
       chatbox.innerHTML = "";
-      chatbox.innerHTML += `<div class="message user">OPERATOR: ${userText}</div>`;
+      chatbox.innerHTML += `<div class="message user">AGENT: ${userText}</div>`;
       inputField.value = "";
       sendButton.disabled = true;
 
@@ -663,10 +668,11 @@
           chatbox.innerHTML += `<div class="message bot">SYSTEM: ${data.reply}</div>`;
           chatbox.scrollTop = chatbox.scrollHeight;
 
-          // Grant clearance if valid
+          // Grant clearance if valid and update placeholder
           if (!cleared && userText.toLowerCase().includes('agent')) {
             sessionStorage.setItem('agentCleared', 'true');
-            console.log(`Agent clearance granted: ${requestId}`);
+            inputField.placeholder = "AGENT AUTHORIZED: Ask The Questions You Seek Answers To";
+            console.log(`Agent clearance granted, placeholder updated: ${requestId}`);
           }
 
           if ('speechSynthesis' in window) {
@@ -697,7 +703,9 @@
 
             utterance.onend = () => {
               console.log(`Speech synthesis completed: ${requestId}`);
-              if (!isMobile && mainVideo && !isSwitching) {
+              if (!isMobile && mainVideo) {
+                console.log(`Reverting to initial video: Animate-20250422.mp4, requestId: ${requestId}`);
+                isSwitching = false;
                 mainVideo.src = "./Animate-20250422.mp4";
                 mainVideo.playbackRate = 1.0;
                 mainVideo.currentTime = 0;
@@ -715,7 +723,6 @@
                 }
               }
               sendButton.disabled = false;
-              isSwitching = false;
             };
 
             console.log(`Starting speech synthesis with voice: ${maleVoice ? maleVoice.name : "none"}, requestId: ${requestId}`);
@@ -726,6 +733,7 @@
               console.log(`Fallback delay completed: ${requestId}`);
               if (!isMobile && mainVideo && !isSwitching) {
                 isSwitching = true;
+                console.log(`Switching to response video: 348910056580788233.mp4, requestId: ${requestId}`);
                 mainVideo.src = "./348910056580788233.mp4";
                 mainVideo.playbackRate = 1.2;
                 mainVideo.currentTime = 0;
@@ -734,6 +742,7 @@
                   retryVideoPlayback(mainVideo);
                 });
                 setTimeout(() => {
+                  console.log(`Reverting to initial video: Animate-20250422.mp4, requestId: ${requestId}`);
                   mainVideo.src = "./Animate-20250422.mp4";
                   mainVideo.playbackRate = 1.0;
                   mainVideo.currentTime = 0;
@@ -741,7 +750,7 @@
                     console.error(`Revert video playback failed: ${requestId}`, error);
                     retryVideoPlayback(mainVideo);
                   });
-                  if (PAUSE_SIDEBAR_DURING_RESPONSE) {
+                  if (PAUSE_SIDEBAR_PURRING_RESPONSE) {
                     sidebarVideos.forEach(video => {
                       video.play().catch(error => {
                         console.error(`Sidebar video resume failed: ${video.src}, ${requestId}`, error);
@@ -775,6 +784,7 @@
             console.error(`Console response error: ${requestId}`, error);
             chatbox.innerHTML += `<div class="message bot">SYSTEM ERROR: ${error.message}</div>`;
             if (!isMobile && mainVideo && !isSwitching) {
+              console.log(`Reverting to initial video on error: Animate-20250422.mp4, requestId: ${requestId}`);
               mainVideo.src = "./Animate-20250422.mp4";
               mainVideo.playbackRate = 1.0;
               mainVideo.currentTime = 0;
