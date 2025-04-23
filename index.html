@@ -319,7 +319,7 @@
         font-size: 0.7em;
       }
     }
-    /* New styles for ERORR ERORR flashing effect */
+    /* Styles for ERORR ERORR and JEET ALERT flashing effect */
     #error-screen {
       position: fixed;
       top: 0;
@@ -328,7 +328,7 @@
       height: 100%;
       background: #000;
       color: #ff0000;
-      font-size: 10vw;
+      font-size: 8vw; /* Slightly smaller for two lines */
       font-family: 'Courier New', monospace;
       display: none;
       align-items: center;
@@ -336,6 +336,7 @@
       text-align: center;
       z-index: 1001; /* Above modal */
       text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+      line-height: 1.5; /* Space between ERORR ERORR and JEET ALERT */
     }
   </style>
 </head>
@@ -346,7 +347,7 @@
       <div id="chatContainer">
         <h2>Cross Chain Intelligence Agency</h2>
         <div id="chatbox"></div>
-        <input id="userInput" type="text" placeholder="ENTER AGENT NAME AND QUERY (INCLUDE 'AGENT')">
+        <input id="userInput" type="text" placeholder="ENTER AGENT ID">
         <button id="sendButton">TRANSMIT</button>
       </div>
     </div>
@@ -380,8 +381,8 @@
     <span class="modal-close" onclick="closeModal()">×</span>
     <img id="modal-content" class="modal-content">
   </div>
-  <!-- New error screen div -->
-  <div id="error-screen">ERORR ERORR</div>
+  <!-- Error screen with ERORR ERORR and JEET ALERT -->
+  <div id="error-screen">ERORR ERORR<br>JEET ALERT</div>
 
   <script>
     // Configuration
@@ -411,6 +412,9 @@
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     let mainVideo = null;
     let isSwitching = false;
+
+    // Check if user is already cleared
+    const isAgentCleared = () => localStorage.getItem('agentCleared') === 'true';
 
     if (!isMobile) {
       mainVideo = document.createElement("video");
@@ -552,13 +556,18 @@
       inputField.value = "";
       sendButton.disabled = true;
 
+      // Check clearance status
+      const cleared = isAgentCleared();
+      console.log(`Agent clearance status: ${cleared}, requestId: ${requestId}`);
+
       fetch("https://ccia.onrender.com/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           message: userText,
           requestId: requestId,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          isCleared: cleared // Send clearance status
         })
       })
         .then(response => {
@@ -577,6 +586,12 @@
           console.log(`Received server response: ${requestId}, reply: ${data.reply}`);
           chatbox.innerHTML += `<div class="message bot">SYSTEM: ${data.reply}</div>`;
           chatbox.scrollTop = chatbox.scrollHeight;
+
+          // If not already cleared, check if this transmission grants clearance
+          if (!cleared && userText.toLowerCase().includes('agent')) {
+            localStorage.setItem('agentCleared', 'true');
+            console.log(`Agent clearance granted: ${requestId}`);
+          }
 
           if ('speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance(data.reply);
