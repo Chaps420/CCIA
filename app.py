@@ -59,7 +59,7 @@ def health():
 
 def verify_agent_clearance(transmission):
     """
-    Verify Agent clearance by checking for a non-empty Agent Name and the word 'Agent' in the transmission.
+    Verify Agent clearance by checking for the word 'Agent' in the transmission.
     
     Args:
         transmission (str): Incoming transmission.
@@ -200,12 +200,14 @@ def chat():
 
     data = request.json
     transmission = data.get("message", "").strip()
-    logging.info(f"Raw Transmission: '{transmission}'")
+    is_cleared = data.get("isCleared", False)
+    logging.info(f"Raw Transmission: '{transmission}', isCleared: {is_cleared}")
+
     if not transmission:
         return jsonify({"error": "Transmission Empty - Clearance Denied"}), 400
 
-    # Verify Agent clearance
-    if not verify_agent_clearance(transmission):
+    # Verify Agent clearance only if not already cleared
+    if not is_cleared and not verify_agent_clearance(transmission):
         error_msg = "CLEARANCE_DENIED"
         logging.warning(f"Unauthorized Transmission: {transmission}")
         return jsonify({"error": error_msg}), 403
