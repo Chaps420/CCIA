@@ -319,6 +319,24 @@
         font-size: 0.7em;
       }
     }
+    /* New styles for ERORR ERORR flashing effect */
+    #error-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #ff0000;
+      font-size: 10vw;
+      font-family: 'Courier New', monospace;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 1001; /* Above modal */
+      text-shadow: 0 0 10px rgba(255, 0, 0, 0.8);
+    }
   </style>
 </head>
 <body>
@@ -328,7 +346,7 @@
       <div id="chatContainer">
         <h2>Cross Chain Intelligence Agency</h2>
         <div id="chatbox"></div>
-        <input id="userInput" type="text" placeholder="ENTER QUERY [CLASSIFIED]">
+        <input id="userInput" type="text" placeholder="ENTER AGENT NAME AND QUERY (INCLUDE 'AGENT')">
         <button id="sendButton">TRANSMIT</button>
       </div>
     </div>
@@ -362,6 +380,8 @@
     <span class="modal-close" onclick="closeModal()">×</span>
     <img id="modal-content" class="modal-content">
   </div>
+  <!-- New error screen div -->
+  <div id="error-screen">ERORR ERORR</div>
 
   <script>
     // Configuration
@@ -542,6 +562,14 @@
         })
       })
         .then(response => {
+          if (response.status === 403 && response.headers.get('content-type').includes('application/json')) {
+            return response.json().then(data => {
+              if (data.error === 'CLEARANCE_DENIED') {
+                throw new Error('CLEARANCE_DENIED');
+              }
+              throw new Error(`HTTP error! status: ${response.status}`);
+            });
+          }
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           return response.json();
         })
@@ -638,27 +666,43 @@
           }
         })
         .catch(error => {
-          console.error(`Console response error: ${requestId}`, error);
-          chatbox.innerHTML += `<div class="message bot">SYSTEM ERROR: ${error.message}</div>`;
-          if (!isMobile && mainVideo && !isSwitching) {
-            mainVideo.src = "./Animate-20250422.mp4";
-            mainVideo.playbackRate = 1.0;
-            mainVideo.currentTime = 0;
-            mainVideo.play().catch(error => {
-              console.error(`Revert video playback failed: ${requestId}`, error);
-              retryVideoPlayback(mainVideo);
-            });
-            if (PAUSE_SIDEBAR_DURING_RESPONSE) {
-              sidebarVideos.forEach(video => {
-                video.play().catch(error => {
-                  console.error(`Sidebar video resume failed: ${video.src}, ${requestId}`, error);
-                  retryVideoPlayback(video);
-                });
+          if (error.message === 'CLEARANCE_DENIED') {
+            console.log(`Clearance denied: ${requestId}`);
+            const errorScreen = document.getElementById('error-screen');
+            errorScreen.style.display = 'flex';
+            let flashCount = 0;
+            const flashInterval = setInterval(() => {
+              errorScreen.style.color = errorScreen.style.color === 'rgb(255, 0, 0)' ? '#000' : '#ff0000';
+              flashCount++;
+              if (flashCount >= 6) { // Flash 3 times (6 toggles)
+                clearInterval(flashInterval);
+                console.log(`Redirecting to YouTube: ${requestId}`);
+                window.location.href = 'https://www.youtube.com/watch?v=zL19uMsnpSU';
+              }
+            }, 500); // Flash every 500ms
+          } else {
+            console.error(`Console response error: ${requestId}`, error);
+            chatbox.innerHTML += `<div class="message bot">SYSTEM ERROR: ${error.message}</div>`;
+            if (!isMobile && mainVideo && !isSwitching) {
+              mainVideo.src = "./Animate-20250422.mp4";
+              mainVideo.playbackRate = 1.0;
+              mainVideo.currentTime = 0;
+              mainVideo.play().catch(error => {
+                console.error(`Revert video playback failed: ${requestId}`, error);
+                retryVideoPlayback(mainVideo);
               });
+              if (PAUSE_SIDEBAR_DURING_RESPONSE) {
+                sidebarVideos.forEach(video => {
+                  video.play().catch(error => {
+                    console.error(`Sidebar video resume failed: ${video.src}, ${requestId}`, error);
+                    retryVideoPlayback(video);
+                  });
+                });
+              }
             }
+            sendButton.disabled = false;
+            isSwitching = false;
           }
-          sendButton.disabled = false;
-          isSwitching = false;
         });
     }
 
