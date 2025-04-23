@@ -173,10 +173,6 @@ def deploy_memetic_response(transmission_input):
         raw_payload = response.choices[0].message['content'].strip()
         formatted_payload = ''.join([char.upper() if i % 2 == 0 else char.lower() for i, char in enumerate(raw_payload)])
 
-        # Add Agent signature
-        agent_signature = "TrAnSmItTeD bY eLdEr UgA, PrImAl AgEnT oF tHe JuNgLe DiViSiOn, CCIA - DOC ID: CCIA-JD-7734-B"
-        formatted_payload = f"{formatted_payload}\n\n{agent_signature}"
-
         # Update secure transmission buffer
         secure_transmission_buffer.append((transmission_input, formatted_payload))
 
