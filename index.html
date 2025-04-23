@@ -1,4 +1,4 @@
-<!DOCTYPE htmL>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -148,13 +148,16 @@
     }
     #chatContainer h2 {
       margin: 0 0 10px;
-      font-size: 1.8em;
+      font-size: 1.4em; /* Reduced to fit longer text */
       color: #ff0000;
       text-shadow: 0 0 10px rgba(255, 0, 0, 0.9);
-      letter-spacing: 2px;
+      letter-spacing: 1px; /* Reduced for fit */
       text-transform: uppercase;
       text-align: center;
       animation: blink 1.5s infinite;
+      white-space: nowrap; /* Prevent wrapping */
+      overflow: hidden; /* Handle overflow */
+      text-overflow: ellipsis; /* Ellipsis if too long */
     }
     #chatbox {
       flex: 1;
@@ -315,8 +318,8 @@
         padding: 5px;
       }
       #chatContainer h2 {
-        font-size: 1.2em;
-        letter-spacing: 1px;
+        font-size: 1.0em; /* Further reduced for mobile */
+        letter-spacing: 0.5px;
       }
       #chatbox {
         max-height: 150px;
@@ -346,7 +349,8 @@
         max-width: 250px;
       }
       #chatContainer h2 {
-        font-size: 1em;
+        font-size: 0.8em; /* Further reduced for small screens */
+        letter-spacing: 0.3px;
       }
       #chatbox {
         max-height: 120px;
@@ -396,7 +400,7 @@
     <div class="main-console">
       <div id="videoContainer"></div>
       <div id="chatContainer">
-        <h2>CROSSCHAIN INTELLIGENCE AGENCY</h2>
+        <h2>CCIA MAINFRAME - AUTHORIZED ACCESS ONLY</h2>
         <div id="chatbox"></div>
         <input id="userInput" type="text" placeholder="ENTER AGENT ID">
         <button id="sendButton">TRANSMIT</button>
@@ -411,6 +415,7 @@
           </video>
           <div class="overlay">!! DO NOT CLICK !!</div>
         </a>
+        <p>CLASSIFIED DOCUMENTS</p>
       </div>
       <div class="media-panel">
         <a href="https://firstledger.net/token/rBFJGmWj6YaabVCxfsjiCM8pfYXs8xFdeC/UGA" target="_blank">
@@ -489,7 +494,7 @@
         mainVideo.playsinline = true;
         mainVideo.src = "./Animate-20250422.mp4";
         videoContainer.appendChild(mainVideo);
-        console.log("Attempting to play initial video: Animate-20250422.mp4");
+        console.log("Attempting to play initial video: Animate-/colors/20250422.mp4");
 
         mainVideo.play().catch(error => {
           console.error("Initial main video playback failed:", error);
@@ -750,7 +755,7 @@
                     console.error(`Revert video playback failed: ${requestId}`, error);
                     retryVideoPlayback(mainVideo);
                   });
-                  if (PAUSE_SIDEBAR_PURRING_RESPONSE) {
+                  if (PAUSE_SIDEBAR_DURING_RESPONSE) {
                     sidebarVideos.forEach(video => {
                       video.play().catch(error => {
                         console.error(`Sidebar video resume failed: ${video.src}, ${requestId}`, error);
