@@ -47,18 +47,23 @@
       border-left: 1px solid #ff0000;
       display: flex;
       flex-direction: column;
-      justify-content: space-around;
+      justify-content: space-between;
       align-items: center;
-      overflow-y: auto;
+      overflow-y: hidden; /* Prevent scrollbar */
     }
     .media-panel {
       width: 100%;
-      margin-bottom: 10px;
       text-align: center;
+      position: relative;
+      margin: 5px 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     .media-panel img, .media-panel video {
       max-width: 100%;
-      max-height: 200px;
+      max-height: 120px; /* Shrunk for equal sizing */
       object-fit: contain;
       border: 1px solid #ff0000;
       box-shadow: 0 0 10px rgba(255, 0, 0, 0.3);
@@ -77,10 +82,33 @@
     }
     .media-panel p {
       margin: 5px 0 0;
-      font-size: 0.9em;
+      font-size: 0.8em;
       color: #ff0000;
       text-transform: uppercase;
       text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      color: #ff0000;
+      font-size: 1em;
+      font-weight: bold;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      z-index: 10;
+      text-shadow: 0 0 5px rgba(255, 0, 0, 0.8);
+      animation: flash 1s infinite;
+      pointer-events: none; /* Allow clicks to pass through */
+    }
+    @keyframes flash {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
     }
     #videoContainer {
       width: 100%;
@@ -244,6 +272,7 @@
         height: 150px;
         flex-direction: row;
         overflow-x: auto;
+        overflow-y: hidden;
         border-left: none;
         border-top: 1px solid #ff0000;
       }
@@ -252,10 +281,13 @@
         margin-right: 10px;
       }
       .media-panel img, .media-panel video {
-        max-width: 100px;
-        max-height: 100px;
+        max-width: 80px;
+        max-height: 80px;
       }
       .media-panel p {
+        font-size: 0.7em;
+      }
+      .overlay {
         font-size: 0.8em;
       }
       #videoContainer {
@@ -281,6 +313,9 @@
         font-size: 0.9em;
       }
       .media-panel p {
+        font-size: 0.6em;
+      }
+      .overlay {
         font-size: 0.7em;
       }
     }
@@ -304,20 +339,22 @@
             <source src="./UgaCCIAvideo.mp4" type="video/mp4">
             <p>Video failed to load. Check file path or format.</p>
           </video>
+          <div class="overlay">!! DO NOT CLICK !!</div>
         </a>
-        <p>CCIA CLASSIFIED FILES <br> !! DO NOT CLICK !!</p>
       </div>
-      <div class="media-panel" style="margin-top: 20px;">
+      <div class="media-panel">
         <a href="https://firstledger.net/token/rBFJGmWj6YaabVCxfsjiCM8pfYXs8xFdeC/UGA" target="_blank">
           <img src="./UgaCIA.png" alt="Uga CIA Image">
+          <div class="overlay">!! DO NOT CLICK !!</div>
         </a>
         <p>INTERCEPTED CODE</p>
       </div>
       <div class="media-panel">
         <a href="https://x.com/UgAbugaXRP" target="_blank">
-          <img src="./ccia_logo.png" alt="CCIA Logo" style="max-height: 150px;">
+          <img src="./ccia_logo.png" alt="CCIA Logo" style="max-height: 120px;">
+          <div class="overlay">!! DO NOT CLICK !!</div>
         </a>
-        <p>!! DO NOT CLICK !!</p>
+        <p>!! DO NOT CLICK !!<br>AUTHORIZED ACCESS ONLY</p>
       </div>
     </div>
   </div>
