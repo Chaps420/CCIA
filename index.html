@@ -55,7 +55,7 @@
       width: 100%;
       margin-bottom: 10px;
       text-align: center;
-      position: relative; /* For overlay positioning */
+      position: relative;
     }
     .media-panel img, .media-panel video {
       max-width: 100%;
@@ -353,7 +353,20 @@
 
   <script>
     // Configuration
-    const PAUSE_SIDEBAR_DURING_RESPONSE = false; // Set to true to pause sidebar videos during main video response
+    const PAUSE_SIDEBAR_DURING_RESPONSE = false;
+
+    // Debounce function to prevent rapid submissions
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
 
     // Initialize main video container
     const inputField = document.getElementById("userInput");
@@ -368,7 +381,6 @@
     let isSwitching = false;
 
     if (!isMobile) {
-      // Initialize with Animate-20250422.mp4
       mainVideo = document.createElement("video");
       mainVideo.id = "mainVideo";
       mainVideo.autoplay = true;
@@ -384,7 +396,6 @@
         retryVideoPlayback(mainVideo);
       });
 
-      // Debug main video
       mainVideo.addEventListener('error', (e) => {
         console.error('Main video error:', e);
         console.error(`Failed to load video: ${mainVideo.src}`);
@@ -401,7 +412,6 @@
         retryVideoPlayback(mainVideo);
       });
     } else {
-      // Mobile: Use still image
       const stillImage = document.createElement("img");
       stillImage.id = "stillImage";
       stillImage.src = "./StillImage.png";
@@ -429,12 +439,12 @@
           console.error(`Bottom video playback failed: ${video.src}`, error);
           retryVideoPlayback(video);
         });
-        overlay.style.display = 'none'; // Hide overlay after click
+        overlay.style.display = 'none';
         console.log("Bottom video playback triggered");
       }
     }
 
-    // Monitor sidebar videos for pausing (exclude bottom video unless played)
+    // Monitor sidebar videos for pausing (exclude bottom video)
     const sidebarVideos = document.querySelectorAll('.media-panel video:not(.bottom-video)');
     sidebarVideos.forEach(video => {
       video.addEventListener('error', (e) => {
@@ -452,14 +462,13 @@
         console.warn(`Sidebar video stalled: ${video.querySelector('source').src}`);
         retryVideoPlayback(video);
       });
-      // Initial play attempt
       video.play().catch(error => {
         console.error(`Initial playback failed for ${video.querySelector('source').src}:`, error);
         retryVideoPlayback(video);
       });
     });
 
-    // Periodic check for paused sidebar videos (exclude bottom video)
+    // Periodic check for paused sidebar videos
     setInterval(() => {
       sidebarVideos.forEach(video => {
         if (video.paused && !isSwitching) {
@@ -511,10 +520,11 @@
 
     // Chat functionality
     function sendMessage() {
-      console.log("sendMessage function triggered");
+      const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      console.log(`sendMessage triggered: ${requestId}, input: ${inputField.value}`);
       const userText = inputField.value.trim();
       if (!userText) {
-        console.log("No text entered, exiting sendMessage");
+        console.log(`No text entered, exiting sendMessage: ${requestId}`);
         return;
       }
 
@@ -525,7 +535,7 @@
 
       if (!isMobile && mainVideo && !isSwitching) {
         isSwitching = true;
-        console.log("Switching to response video: 348910056580788233.mp4");
+        console.log(`Switching to response video: 348910056580788233.mp4, requestId: ${requestId}`);
         if (PAUSE_SIDEBAR_DURING_RESPONSE) {
           sidebarVideos.forEach(video => video.pause());
         }
@@ -533,7 +543,7 @@
         mainVideo.playbackRate = 1.2;
         mainVideo.currentTime = 0;
         mainVideo.play().catch(error => {
-          console.error("Response video playback failed:", error);
+          console.error(`Response video playback failed: ${requestId}`, error);
           retryVideoPlayback(mainVideo);
         });
       }
@@ -541,14 +551,18 @@
       fetch("https://ccia.onrender.com/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: userText })
+        body: JSON.stringify({ 
+          message: userText,
+          requestId: requestId,
+          timestamp: Date.now()
+        })
       })
         .then(response => {
           if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           return response.json();
         })
         .then(data => {
-          console.log("Received server response:", data);
+          console.log(`Received server response: ${requestId}, reply: ${data.reply}`);
           chatbox.innerHTML += `<div class="message bot">SYSTEM: ${data.reply}</div>`;
           chatbox.scrollTop = chatbox.scrollHeight;
 
@@ -561,11 +575,11 @@
             if (maleVoice) utterance.voice = maleVoice;
 
             utterance.onstart = () => {
-              console.log("Speech synthesis started");
+              console.log(`Speech synthesis started: ${requestId}`);
               if (!isMobile && mainVideo && mainVideo.src.includes("348910056580788233.mp4")) {
                 requestAnimationFrame(() => {
                   mainVideo.play().catch(error => {
-                    console.error("Speech-sync video playback failed:", error);
+                    console.error(`Speech-sync video playback failed: ${requestId}`, error);
                     retryVideoPlayback(mainVideo);
                   });
                 });
@@ -573,19 +587,19 @@
             };
 
             utterance.onend = () => {
-              console.log("Speech synthesis completed, reverting to initial video");
+              console.log(`Speech synthesis completed: ${requestId}`);
               if (!isMobile && mainVideo && !isSwitching) {
                 mainVideo.src = "./Animate-20250422.mp4";
                 mainVideo.playbackRate = 1.0;
                 mainVideo.currentTime = 0;
                 mainVideo.play().catch(error => {
-                  console.error("Revert video playback failed:", error);
+                  console.error(`Revert video playback failed: ${requestId}`, error);
                   retryVideoPlayback(mainVideo);
                 });
                 if (PAUSE_SIDEBAR_DURING_RESPONSE) {
                   sidebarVideos.forEach(video => {
                     video.play().catch(error => {
-                      console.error(`Sidebar video resume failed: ${video.src}`, error);
+                      console.error(`Sidebar video resume failed: ${video.src}, ${requestId}`, error);
                       retryVideoPlayback(video);
                     });
                   });
@@ -595,24 +609,24 @@
               isSwitching = false;
             };
 
-            console.log("Starting speech synthesis with voice:", maleVoice ? maleVoice.name : "none");
+            console.log(`Starting speech synthesis with voice: ${maleVoice ? maleVoice.name : "none"}, requestId: ${requestId}`);
             speechSynthesis.speak(utterance);
           } else {
-            console.warn("Web Speech API not supported, using fallback delay");
+            console.warn(`Web Speech API not supported, using fallback delay: ${requestId}`);
             setTimeout(() => {
-              console.log("Fallback delay completed, reverting to initial video");
+              console.log(`Fallback delay completed: ${requestId}`);
               if (!isMobile && mainVideo && !isSwitching) {
                 mainVideo.src = "./Animate-20250422.mp4";
                 mainVideo.playbackRate = 1.0;
                 mainVideo.currentTime = 0;
                 mainVideo.play().catch(error => {
-                  console.error("Revert video playback failed:", error);
+                  console.error(`Revert video playback failed: ${requestId}`, error);
                   retryVideoPlayback(mainVideo);
                 });
                 if (PAUSE_SIDEBAR_DURING_RESPONSE) {
                   sidebarVideos.forEach(video => {
                     video.play().catch(error => {
-                      console.error(`Sidebar video resume failed: ${video.src}`, error);
+                      console.error(`Sidebar video resume failed: ${video.src}, ${requestId}`, error);
                       retryVideoPlayback(video);
                     });
                   });
@@ -624,20 +638,20 @@
           }
         })
         .catch(error => {
-          console.error('Console response error:', error);
+          console.error(`Console response error: ${requestId}`, error);
           chatbox.innerHTML += `<div class="message bot">SYSTEM ERROR: ${error.message}</div>`;
           if (!isMobile && mainVideo && !isSwitching) {
             mainVideo.src = "./Animate-20250422.mp4";
             mainVideo.playbackRate = 1.0;
             mainVideo.currentTime = 0;
             mainVideo.play().catch(error => {
-              console.error("Revert video playback failed:", error);
+              console.error(`Revert video playback failed: ${requestId}`, error);
               retryVideoPlayback(mainVideo);
             });
             if (PAUSE_SIDEBAR_DURING_RESPONSE) {
               sidebarVideos.forEach(video => {
                 video.play().catch(error => {
-                  console.error(`Sidebar video resume failed: ${video.src}`, error);
+                  console.error(`Sidebar video resume failed: ${video.src}, ${requestId}`, error);
                   retryVideoPlayback(video);
                 });
               });
@@ -648,16 +662,19 @@
         });
     }
 
+    // Debounced sendMessage
+    const debouncedSendMessage = debounce(sendMessage, 500);
+
     // Attach event listeners with debugging
     sendButton.addEventListener("click", () => {
       console.log("Transmit button clicked");
-      sendMessage();
+      debouncedSendMessage();
     });
 
     inputField.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         console.log("Enter key pressed");
-        sendMessage();
+        debouncedSendMessage();
       }
     });
 
