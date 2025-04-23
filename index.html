@@ -19,17 +19,6 @@
       align-items: center;
       box-sizing: border-box;
     }
-    #backgroundVideo {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      object-fit: cover;
-      z-index: -1;
-      opacity: 0.1;
-      filter: grayscale(100%);
-    }
     .wrapper {
       width: 95%;
       max-width: 1200px;
@@ -298,10 +287,6 @@
   </style>
 </head>
 <body>
-  <video id="backgroundVideo" playsinline autoplay loop muted>
-    <source src="./background.mp4" type="video/mp4">
-    <p>Video failed to load. Ensure 'background.mp4' is in the correct directory and try using a local web server.</p>
-  </video>
   <div class="wrapper">
     <div class="main-console">
       <div id="videoContainer"></div>
@@ -315,8 +300,9 @@
     <div class="sidebar">
       <div class="media-panel">
         <a href="https://classified-cia-ugalabz.replit.app/" target="_blank">
-          <video autoplay loop muted>
+          <video autoplay loop muted preload="auto">
             <source src="./MrJ.mp4" type="video/mp4">
+            <p>Video failed to load. Check file path or format.</p>
           </video>
         </a>
         <p>CCIA CLASSIFIED FILES <br> !! DO NOT CLICK !!</p>
@@ -329,8 +315,9 @@
       </div>
       <div class="media-panel">
         <a href="https://x.com/UgAbugaXRP" target="_blank">
-          <video autoplay loop muted style="max-height: 150px;">
+          <video autoplay loop muted preload="auto" style="max-height: 150px;">
             <source src="./UgaCCIAvideo.mp4" type="video/mp4">
+            <p>Video failed to load. Check file path or format.</p>
           </video>
         </a>
         <p>DECLASSIFIED VIDEO</p>
@@ -343,16 +330,6 @@
   </div>
 
   <script>
-    // Debug background video
-    const backgroundVideo = document.getElementById("backgroundVideo");
-    backgroundVideo.addEventListener('error', (e) => {
-      console.error('Background video error:', e);
-      console.error('Ensure ./background.mp4 is in the correct directory and accessible');
-    });
-    backgroundVideo.addEventListener('loadeddata', () => {
-      console.log('Background video loaded successfully');
-    });
-
     // Initialize main video container
     const inputField = document.getElementById("userInput");
     const sendButton = document.getElementById("sendButton");
@@ -371,11 +348,13 @@
       mainVideo.autoplay = true;
       mainVideo.loop = true;
       mainVideo.muted = true;
-      mainVideo.innerHTML = `<source src="./Animate-20250422.mp4" type="video/mp4">`;
+      mainVideo.preload = "auto";
+      mainVideo.innerHTML = `<source src="./Animate-20250422.mp4" type="video/mp4"><p>Video failed to load. Check file path or format.</p>`;
       videoContainer.appendChild(mainVideo);
       console.log("Attempting to play initial video: Animate-20250422.mp4");
       mainVideo.play().catch(error => {
         console.error("Initial main video playback failed:", error);
+        retryVideoPlayback(mainVideo);
       });
 
       // Debug main video
@@ -396,6 +375,17 @@
       console.log("Mobile device detected, using StillImage.png");
     }
 
+    // Video playback retry function
+    function retryVideoPlayback(video) {
+      console.log(`Retrying playback for video: ${video.querySelector('source').src}`);
+      setTimeout(() => {
+        video.load();
+        video.play().catch(error => {
+          console.error(`Retry playback failed for ${video.querySelector('source').src}:`, error);
+        });
+      }, 1000);
+    }
+
     // Debug sidebar videos
     document.querySelectorAll('.media-panel video').forEach(video => {
       video.addEventListener('error', (e) => {
@@ -404,6 +394,11 @@
       });
       video.addEventListener('loadeddata', () => {
         console.log(`Sidebar video loaded: ${video.querySelector('source').src}`);
+      });
+      // Attempt to play and retry if failed
+      video.play().catch(error => {
+        console.error(`Initial playback failed for ${video.querySelector('source').src}:`, error);
+        retryVideoPlayback(video);
       });
     });
 
@@ -429,16 +424,18 @@
     });
 
     // Voice selection
-    function getElderVoice() {
+    function getDefaultMaleVoice() {
       const voices = speechSynthesis.getVoices();
-      const preferredVoices = voices.filter(voice => 
-        (voice.lang === "en-GB" || voice.lang === "en-US") &&
+      // Prioritize the default voice
+      const defaultVoice = voices.find(voice => voice.default) || null;
+      // Check for male voices (heuristic: exclude female, prefer en-US or en-GB)
+      const maleVoices = voices.filter(voice => 
+        (voice.lang === "en-US" || voice.lang === "en-GB") &&
         (voice.name.toLowerCase().includes("male") || 
-         voice.name.includes("Daniel") || 
-         voice.name.includes("David") || 
-         voice.name.includes("Mark"))
+         !voice.name.toLowerCase().includes("female"))
       );
-      return preferredVoices[0] || voices.find(voice => voice.default) || voices[0] || null;
+      // Return default voice if available, else first male voice, else any voice
+      return defaultVoice || maleVoices[0] || voices[0] || null;
     }
 
     let voicesLoaded = false;
@@ -464,11 +461,14 @@
 
       if (!isMobile && mainVideo) {
         console.log("Switching to response video: 348910056580788233.mp4");
-        mainVideo.innerHTML = `<source src="./348910056580788233.mp4" type="video/mp4">`;
+        mainVideo.innerHTML = `<source src="./348910056580788233.mp4" type="video/mp4"><p>Video failed to load. Check file path or format.</p>`;
         mainVideo.load();
         mainVideo.playbackRate = 1.5;
         mainVideo.currentTime = 0;
-        mainVideo.play().catch(error => console.error("Response video playback failed:", error));
+        mainVideo.play().catch(error => {
+          console.error("Response video playback failed:", error);
+          retryVideoPlayback(mainVideo);
+        });
       }
 
       fetch("https://ccia.onrender.com/chat", {
@@ -490,33 +490,39 @@
             utterance.pitch = 0.8;
             utterance.rate = 0.7;
             utterance.volume = 1.0;
-            const elderVoice = getElderVoice();
-            if (elderVoice) utterance.voice = elderVoice;
+            const maleVoice = getDefaultMaleVoice();
+            if (maleVoice) utterance.voice = maleVoice;
 
             utterance.onend = () => {
               console.log("Speech synthesis completed, reverting to initial video");
               if (!isMobile && mainVideo) {
-                mainVideo.innerHTML = `<source src="./Animate-20250422.mp4" type="video/mp4">`;
+                mainVideo.innerHTML = `<source src="./Animate-20250422.mp4" type="video/mp4"><p>Video failed to load. Check file path or format.</p>`;
                 mainVideo.load();
                 mainVideo.playbackRate = 1.0;
                 mainVideo.currentTime = 0;
-                mainVideo.play().catch(error => console.error("Revert video playback failed:", error));
+                mainVideo.play().catch(error => {
+                  console.error("Revert video playback failed:", error);
+                  retryVideoPlayback(mainVideo);
+                });
               }
               sendButton.disabled = false;
             };
 
-            console.log("Starting speech synthesis");
+            console.log("Starting speech synthesis with voice:", maleVoice ? maleVoice.name : "none");
             speechSynthesis.speak(utterance);
           } else {
             console.warn("Web Speech API not supported, using fallback delay");
             setTimeout(() => {
               console.log("Fallback delay completed, reverting to initial video");
               if (!isMobile && mainVideo) {
-                mainVideo.innerHTML = `<source src="./Animate-20250422.mp4" type="video/mp4">`;
+                mainVideo.innerHTML = `<source src="./Animate-20250422.mp4" type="video/mp4"><p>Video failed to load. Check file path or format.</p>`;
                 mainVideo.load();
                 mainVideo.playbackRate = 1.0;
                 mainVideo.currentTime = 0;
-                mainVideo.play().catch(error => console.error("Revert video playback failed:", error));
+                mainVideo.play().catch(error => {
+                  console.error("Revert video playback failed:", error);
+                  retryVideoPlayback(mainVideo);
+                });
               }
               sendButton.disabled = false;
             }, 5000);
@@ -527,11 +533,14 @@
           chatbox.innerHTML += `<div class="message bot">SYSTEM ERROR: ${error.message}</div>`;
           if (!isMobile && mainVideo) {
             console.log("Error occurred, reverting to initial video");
-            mainVideo.innerHTML = `<source src="./Animate-20250422.mp4" type="video/mp4">`;
+            mainVideo.innerHTML = `<source src="./Animate-20250422.mp4" type="video/mp4"><p>Video failed to load. Check file path or format.</p>`;
             mainVideo.load();
             mainVideo.playbackRate = 1.0;
             mainVideo.currentTime = 0;
-            mainVideo.play().catch(error => console.error("Revert video playback failed:", error));
+            mainVideo.play().catch(error => {
+              console.error("Revert video playback failed:", error);
+              retryVideoPlayback(mainVideo);
+            });
           }
           sendButton.disabled = false;
         });
